@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Constellation Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=tin-result" />
+  <link rel="stylesheet" href="questions/question-01.css" />
+  <link rel="stylesheet" href="questions/question-02.css" />
+  <link rel="stylesheet" href="questions/question-03.css" />
+  <link rel="stylesheet" href="questions/question-04.css" />
+  <link rel="stylesheet" href="questions/question-05.css" />
+  <link rel="stylesheet" href="questions/question-06.css" />
+  <link rel="stylesheet" href="questions/question-07.css" />
+  <link rel="stylesheet" href="questions/question-08.css" />
+  <link rel="stylesheet" href="questions/question-09.css?v=audio-select-fix" />
+</head>
+<body>
+  <div class="stars" aria-hidden="true"><svg viewBox="0 0 1440 900" preserveAspectRatio="none"><g class="constellation constellation-a"><path d="M80 170 L190 110 L300 180 L410 105 L520 150"/><circle cx="80" cy="170" r="4"/><circle cx="190" cy="110" r="4"/><circle cx="300" cy="180" r="4"/><circle cx="410" cy="105" r="4"/><circle cx="520" cy="150" r="4"/></g><g class="constellation constellation-b"><path d="M1010 620 L1090 520 L1200 570 L1270 450 L1370 500"/><circle cx="1010" cy="620" r="4"/><circle cx="1090" cy="520" r="4"/><circle cx="1200" cy="570" r="4"/><circle cx="1270" cy="450" r="4"/><circle cx="1370" cy="500" r="4"/></g><g class="constellation constellation-c"><path d="M780 190 L850 270 L930 230 L980 320"/><circle cx="780" cy="190" r="3"/><circle cx="850" cy="270" r="3"/><circle cx="930" cy="230" r="3"/><circle cx="980" cy="320" r="3"/></g></svg></div>
+  <main id="top">
+    <section class="screen active intro" id="intro">
+      <div class="eyebrow">AN IDENTITY JOURNEY IN THREE PILLARS</div>
+      <h1>What<br><em>constellation</em><br>are you?</h1>
+      <p class="lead">Your identity is not a fixed star. It is a map, shaped by the values you hold, the choices you make, and the paths you choose.</p>
+      <button type="button" class="primary" id="begin">Open the archive <span>↗</span></button>
+      <form class="retrieve-form" id="retrieve-form">
+        <label for="claim-code">Already have a claim code?</label>
+        <div>
+          <input id="claim-code" type="text" placeholder="RURI-PHO-7K2Q" autocomplete="off" />
+          <button type="submit">Retrieve badge</button>
+        </div>
+        <p id="retrieve-message" aria-live="polite"></p>
+      </form>
+      <div class="pillar-row"><span><b>01</b> ACTION</span><span><b>02</b> REFLECTION</span><span><b>03</b> CHOICE</span></div>
+      <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="hero-star">✦</div>
+    </section>
+
+    <section class="screen archive-intro" id="archive-intro">
+      <div class="archive-intro-card">
+        <div class="eyebrow">THE CONSTELLATION ARCHIVE</div>
+        <div class="archive-intro-star">✦</div>
+        <h2>Find your way<br><em>among the stars.</em></h2>
+        <div class="intro-copy">
+          <p>For centuries, people looked to the stars to find their way.</p>
+          <p>Identity is much the same.</p>
+          <p>It is shaped by the values we hold, the choices we make, the people we meet and the paths we choose.</p>
+          <p class="intro-emphasis">There are no right or wrong answers.</p>
+          <p>Simply choose the page that feels like it belongs to your story.</p>
+        </div>
+        <button type="button" class="primary" id="enter-archive">Begin your journey <span>↗</span></button>
+      </div>
+    </section>
+
+    <section class="screen name-intro" id="name-intro">
+      <div class="name-intro-card">
+        <div class="eyebrow">THE ARCHIVE · A NEW STORY BEGINS</div>
+        <h2>What shall<br>we call <em>you?</em></h2>
+        <p>Every constellation has a keeper. Add your name to begin your personal archive.</p>
+        <label for="participant-name">Your name</label>
+        <input id="participant-name" type="text" autocomplete="name" placeholder="Write your name" maxlength="40" />
+        <button type="button" class="primary" id="continue-name">Continue <span>↗</span></button>
+      </div>
+    </section>
+
+    <section class="screen station-intro" id="station-intro">
+      <div class="station-intro-card">
+        <div class="eyebrow">YOUR STAR MAP · BEFORE WE BEGIN</div>
+        <h2 id="station-greeting">Bring along your<br><em>stars, <span id="station-name">you</span></em></h2>
+        <p class="station-lead">At the Sports and Water Polo stations, you discovered two pieces of your story. Add them here so we can carry them through the Archive. Your melody will be chosen in the final entry.</p>
+        <label for="sports-value">Your guiding value <span>SPORTS</span></label>
+        <select id="sports-value"><option value="" selected disabled>Select your value</option><option>Perseverance</option><option>Courage</option><option>Adaptability</option><option>Curiosity</option><option>Kindness</option><option>Teamwork</option><option>Integrity</option><option>Determination</option><option>Optimism</option><option>Resilience</option></select>
+        <label for="hidden-symbol">Your hidden symbol <span>WATER POLO</span></label>
+        <select id="hidden-symbol"><option value="" selected disabled>Select your symbol</option><option>The Compass</option><option>The Lantern</option><option>The Shell</option><option>The Pearl</option><option>The North Star</option></select>
+        <button type="button" class="primary" id="start-archive">Enter the archive <span>↗</span></button>
+      </div>
+    </section>
+
+    <section class="screen quiz" id="quiz">
+      <div class="quiz-top"><div class="eyebrow">THE ARCHIVE · ENTRY <span id="entry-number">01</span></div><div class="progress-dots" id="progress-dots"></div><div class="progress-copy"><span id="progress-label">01</span> / 09</div></div>
+      <div class="flipbook">
+        <div class="question-pane"><p class="question-note" id="question-note"></p><h2 id="question-title"></h2><button class="back" id="back">← Previous question</button></div>
+        <div class="symbol-pane"><div class="symbol-halo"></div><img class="question-image" id="question-image" src="assets/artists-highlights-pin.png" alt="An illustrated artist's scrapbook and scissors" /><div class="question-symbol" id="question-symbol">✦</div></div>
+        <div class="answers-pane"><p class="choose-label">CHOOSE A PAGE</p><div class="answers" id="answers"></div></div>
+      </div>
+      <button type="button" class="home-redirect" id="home-redirect">⌂ Home</button>
+    </section>
+
+    <section class="screen result" id="result">
+      <div class="result-card">
+        <div class="eyebrow">YOUR CONSTELLATION TIN</div>
+        <p class="result-kicker" id="result-kicker">Your guiding constellation is</p>
+        <h1 id="result-name"></h1>
+        <h3 id="result-title"></h3>
+        <div class="tin-scene" aria-label="A keepsake tin representing your quiz choices">
+          <span class="tin-word tin-word-one" id="tin-word-one">wonder</span>
+          <span class="tin-word tin-word-two" id="tin-word-two">courage</span>
+          <span class="tin-word tin-word-three" id="tin-word-three">growth</span>
+          <span class="tin-word tin-word-four" id="tin-word-four">connection</span>
+          <span class="tin-word tin-word-five" id="tin-word-five">direction</span>
+          <div class="tin-lid">
+            <div class="tin-label">
+              <small>PERMANENT RECORD</small>
+              <strong id="tin-person-name">Archive Keeper</strong>
+              <span id="tin-constellation-label">Constellation Archive</span>
+            </div>
+            <div class="tin-clip">♡</div>
+          </div>
+          <div class="tin-base">
+            <div class="tin-item tin-item-star" id="result-symbol">✦</div>
+            <div class="tin-item tin-item-value" id="map-star">—</div>
+            <div class="tin-item tin-item-symbol" id="map-entry">—</div>
+            <div class="tin-item tin-item-melody" id="map-compass">—</div>
+          </div>
+        </div>
+        <p class="result-copy" id="result-copy"></p>
+        <div class="claim-card">
+          <small>YOUR CLAIM CODE</small>
+          <strong id="claim-code-output">Saving…</strong>
+          <button type="button" id="copy-claim-code">Copy code</button>
+          <p id="save-status">Save this code to retrieve your constellation badge later.</p>
+        </div>
+        <button class="primary" id="restart">Begin another journey <span>↗</span></button>
+      </div>
+    </section>
+  </main>
+  <script src="config.js?v=database"></script>
+  <script src="storage.js?v=database"></script>
+  <script src="questions/question-01.js?v=audio-final"></script>
+  <script src="questions/question-02.js?v=audio-final"></script>
+  <script src="questions/question-03.js?v=audio-final"></script>
+  <script src="questions/question-04.js?v=no-melody-input"></script>
+  <script src="questions/question-05.js?v=audio-final"></script>
+  <script src="questions/question-06.js?v=audio-final"></script>
+  <script src="questions/question-07.js?v=audio-final"></script>
+  <script src="questions/question-08.js?v=audio-final"></script>
+  <script src="questions/question-09.js?v=no-melody-input"></script>
+  <script src="app.js?v=audio-select-fix"></script>
+</body>
+</html>

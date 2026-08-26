@@ -1,0 +1,22 @@
+body[data-question="1"] {
+  --question-image-size: 500px;
+  --question-image-offset-x: 0px;
+  --question-image-offset-y: 0px;
+}
+
+body[data-question="1"] .quiz .flipbook {
+  background: linear-gradient(90deg, #E3DED3 0%, #E3DED3 50%, #36496b 50.1%, #36496b 100%);
+}
+
+body[data-question="1"] .quiz .question-pane .question-note,
+body[data-question="1"] .quiz .question-pane h2,
+body[data-question="1"] .quiz .question-pane .back {
+  color: #101820 !important;
+}
+
+@media (min-width: 781px) {
+  body[data-question="1"] .quiz .question-image.visible {
+    width: var(--question-image-size) !important;
+    transform: translate(calc(-50% + var(--question-image-offset-x)), calc(-50% + var(--question-image-offset-y))) !important;
+  }
+}

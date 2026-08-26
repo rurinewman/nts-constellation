@@ -1,0 +1,29 @@
+create table if not exists public.constellation_badges (
+  id uuid primary key default gen_random_uuid(),
+  claim_code text not null unique,
+  participant_name text not null,
+  constellation_name text not null,
+  constellation_title text not null,
+  constellation_symbol text not null,
+  result_copy text not null,
+  sports_value text not null,
+  hidden_symbol text not null,
+  melody text not null,
+  selected_words jsonb not null default '[]'::jsonb,
+  selected_answers jsonb not null default '[]'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+alter table public.constellation_badges enable row level security;
+
+create policy "Anyone can create a constellation badge"
+on public.constellation_badges
+for insert
+to anon
+with check (true);
+
+create policy "Anyone can retrieve a badge by claim code"
+on public.constellation_badges
+for select
+to anon
+using (true);

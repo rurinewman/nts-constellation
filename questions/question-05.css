@@ -1,0 +1,16 @@
+body[data-question="4"] {
+  --question-image-size: 480px;
+  --question-image-offset-x: 0px;
+  --question-image-offset-y: 0px;
+}
+
+body[data-question="4"] .quiz .flipbook {
+  background: linear-gradient(90deg, #244a7f 0%, #244a7f 50%, #7ea9d9 50.1%, #7ea9d9 100%);
+}
+
+@media (min-width: 781px) {
+  body[data-question="4"] .quiz .question-image.visible {
+    width: var(--question-image-size) !important;
+    transform: translate(calc(-50% + var(--question-image-offset-x)), calc(-50% + var(--question-image-offset-y))) !important;
+  }
+}

@@ -1,0 +1,4 @@
+window.archiveConfig = {
+  supabaseUrl: "",
+  supabaseAnonKey: "",
+};
