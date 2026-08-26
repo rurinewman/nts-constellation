@@ -276,14 +276,35 @@ let current = 0,
   };
 const $ = (id) => document.getElementById(id);
 let participantName = "";
+const CARD_PHOTO_RATIO = 537 / 702;
+let cameraStream = null;
+let capturedPhoto = "";
+let pendingResult = null;
+let lastResult = null;
+let resultSaved = false;
+
 function stopAllAudio() {
   document.querySelectorAll("audio").forEach((audio) => {
     audio.pause();
     audio.currentTime = 0;
   });
 }
+
+function stopCamera() {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach((track) => track.stop());
+    cameraStream = null;
+  }
+  const preview = $("camera-preview");
+  if (preview) {
+    preview.pause();
+    preview.srcObject = null;
+  }
+}
+
 function show(id) {
   stopAllAudio();
+  if (id !== "camera") stopCamera();
   document.querySelectorAll(".screen").forEach((s) => {
     s.classList.remove("active");
     s.style.display = "none";
@@ -291,8 +312,9 @@ function show(id) {
   const screen = $(id);
   if (!screen) return;
   screen.classList.add("active");
-  screen.style.display =
-    id === "archive-intro" || id === "name-intro" || id === "station-intro" ? "flex" : "block";
+  screen.style.display = ["archive-intro", "name-intro", "station-intro", "camera"].includes(id)
+    ? "flex"
+    : "block";
   window.scrollTo(0, 0);
 }
 function personalize(text) {
@@ -400,32 +422,252 @@ function select(i) {
     turnPage(1);
   } else reveal();
 }
+
+function updateCameraUI() {
+  const hasPhoto = Boolean(capturedPhoto);
+  const hasStream = Boolean(cameraStream);
+  const preview = $("camera-preview");
+  const captured = $("camera-captured");
+  const placeholder = $("camera-placeholder");
+
+  preview.hidden = !hasStream || hasPhoto;
+  captured.hidden = !hasPhoto;
+  placeholder.hidden = hasStream || hasPhoto;
+  $("camera-capture").disabled = !hasStream || hasPhoto;
+  $("camera-capture").hidden = hasPhoto;
+  $("camera-retake").hidden = !hasPhoto;
+  $("use-photo").hidden = !hasPhoto;
+}
+
+function setCapturedPhoto(dataUrl) {
+  capturedPhoto = dataUrl || "";
+  const image = $("camera-captured");
+  if (capturedPhoto) image.src = capturedPhoto;
+  else image.removeAttribute("src");
+  updateCameraUI();
+}
+
+function setCardPhoto(dataUrl) {
+  const image = $("tin-card-photo");
+  if (!image) return;
+  if (dataUrl) image.src = dataUrl;
+  else image.removeAttribute("src");
+  image.hidden = !dataUrl;
+  image.classList.toggle("visible", Boolean(dataUrl));
+}
+
+function setResultBackVisible(visible) {
+  const button = $("result-back");
+  if (button) button.hidden = !visible;
+}
+
+function cropPhoto(source, sourceWidth, sourceHeight, mirrored = false) {
+  const canvas = $("camera-canvas");
+  const sourceRatio = sourceWidth / sourceHeight;
+  let sx = 0;
+  let sy = 0;
+  let sw = sourceWidth;
+  let sh = sourceHeight;
+
+  if (sourceRatio > CARD_PHOTO_RATIO) {
+    sw = sourceHeight * CARD_PHOTO_RATIO;
+    sx = (sourceWidth - sw) / 2;
+  } else {
+    sh = sourceWidth / CARD_PHOTO_RATIO;
+    sy = (sourceHeight - sh) / 2;
+  }
+
+  const outputHeight = Math.min(Math.round(sh), 960);
+  const outputWidth = Math.round(outputHeight * CARD_PHOTO_RATIO);
+  canvas.width = outputWidth;
+  canvas.height = outputHeight;
+
+  const context = canvas.getContext("2d");
+  context.save();
+  if (mirrored) {
+    context.translate(outputWidth, 0);
+    context.scale(-1, 1);
+  }
+  context.drawImage(source, sx, sy, sw, sh, 0, 0, outputWidth, outputHeight);
+  context.restore();
+  return canvas.toDataURL("image/jpeg", 0.9);
+}
+
+async function startCamera() {
+  stopCamera();
+  setCapturedPhoto("");
+  $("camera-error").textContent = "";
+  $("camera-status").textContent = "Requesting camera access…";
+  updateCameraUI();
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    $("camera-status").textContent = "Camera access is not available here.";
+    $("camera-error").textContent = "Use a photo below, or open the archive over HTTPS on a mobile device.";
+    updateCameraUI();
+    return;
+  }
+
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: {
+        facingMode: { ideal: "user" },
+        width: { ideal: 1080 },
+        height: { ideal: 1440 },
+      },
+    });
+
+    if (!$("camera").classList.contains("active")) {
+      stopCamera();
+      return;
+    }
+
+    const preview = $("camera-preview");
+    preview.srcObject = cameraStream;
+    await preview.play().catch(() => {});
+    $("camera-status").textContent = "Camera ready. Center your face and take a photo.";
+    updateCameraUI();
+  } catch (error) {
+    stopCamera();
+    $("camera-status").textContent = "Camera access is unavailable.";
+    $("camera-error").textContent = error?.name === "NotAllowedError"
+      ? "Camera access was blocked. Allow it in your browser settings, or use a photo below."
+      : "Use a photo below instead.";
+    updateCameraUI();
+  }
+}
+
+function capturePhoto() {
+  const preview = $("camera-preview");
+  if (!cameraStream || !preview.videoWidth || !preview.videoHeight) {
+    $("camera-status").textContent = "The camera is still starting. Try again in a moment.";
+    return;
+  }
+  setCapturedPhoto(cropPhoto(preview, preview.videoWidth, preview.videoHeight, true));
+  $("camera-status").textContent = "Photo captured. Use it for your card, or retake it.";
+}
+
+function handlePhotoUpload(event) {
+  const file = event.target.files && event.target.files[0];
+  event.target.value = "";
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    $("camera-error").textContent = "Choose an image file.";
+    return;
+  }
+
+  const objectUrl = URL.createObjectURL(file);
+  const image = new Image();
+  image.onload = () => {
+    setCapturedPhoto(cropPhoto(image, image.naturalWidth, image.naturalHeight));
+    $("camera-status").textContent = "Photo loaded. Use it for your card, or choose another one.";
+    $("camera-error").textContent = "";
+    URL.revokeObjectURL(objectUrl);
+  };
+  image.onerror = () => {
+    $("camera-error").textContent = "That image could not be loaded. Choose another one.";
+    URL.revokeObjectURL(objectUrl);
+  };
+  image.src = objectUrl;
+}
+
+function applyResult(constellation, selectedWords, resultCopy) {
+  $("result-kicker").textContent = participantName
+    ? `${participantName}, your guiding constellation is`
+    : "Your guiding constellation is";
+  $("result-symbol").textContent = constellation[3];
+  $("result-name").textContent = constellation[0];
+  $("result-title").textContent = constellation[1];
+  $("result-copy").textContent = resultCopy;
+  $("tin-person-name").textContent = participantName || "Archive Keeper";
+  $("tin-constellation-label").textContent = `${constellation[0]} · ${constellation[1]}`;
+  $("map-star").textContent = stationValues.sports;
+  $("map-compass").textContent = stationValues.arts;
+  $("map-entry").textContent = stationValues.hidden;
+  setTinWords(selectedWords);
+  setCardPhoto(capturedPhoto);
+  setResultBackVisible(true);
+}
+
+function finishResult() {
+  if (!pendingResult) return;
+  const { constellation, selectedWords, resultCopy } = pendingResult;
+  const shouldSave = !resultSaved;
+  pendingResult = null;
+  applyResult(constellation, selectedWords, resultCopy);
+  show("result");
+  if (shouldSave) {
+    resultSaved = true;
+    saveCurrentBadge(constellation, selectedWords, resultCopy);
+  }
+}
+
 function reveal() {
   const key =
     Object.keys(scores).sort((a, b) => scores[b] - scores[a])[0] || "pegasus";
   const c = constellations[key] || constellations.pegasus;
   const resultCopy = `Like ${c[0]}, you are guided by ${c[2].toLowerCase()} Your constellation is a reflection of the values shaping your journey today.`;
   const selectedWords = makeTinWords(c);
-  $("result-kicker").textContent = participantName ? `${participantName}, your guiding constellation is` : "Your guiding constellation is";
-  $("result-symbol").textContent = c[3];
-  $("result-name").textContent = c[0];
-  $("result-title").textContent = c[1];
-  $("result-copy").textContent = resultCopy;
-  $("tin-person-name").textContent = participantName || "Archive Keeper";
-  $("tin-constellation-label").textContent = `${c[0]} · ${c[1]}`;
-  $("map-star").textContent = stationValues.sports;
-  $("map-compass").textContent = stationValues.arts;
-  $("map-entry").textContent = stationValues.hidden;
-  setTinWords(selectedWords);
-  show("result");
-  saveCurrentBadge(c, selectedWords, resultCopy);
+  lastResult = { constellation: c, selectedWords, resultCopy };
+  pendingResult = lastResult;
+  resultSaved = false;
+  setCapturedPhoto("");
+  $("camera-error").textContent = "";
+  show("camera");
+  startCamera();
 }
+
+function returnToFinalQuestion() {
+  const finalAnswers = questions[questions.length - 1]?.answers || [];
+  const lastChoice = chosen[chosen.length - 1];
+  const finalAnswer = finalAnswers.find((answer) => answer[0] === lastChoice);
+
+  if (finalAnswer && stationValues.arts === finalAnswer[0]) {
+    chosen.pop();
+    scores[finalAnswer[1]] = (scores[finalAnswer[1]] || 0) - 1;
+    if (scores[finalAnswer[1]] <= 0) delete scores[finalAnswer[1]];
+  }
+
+  current = questions.length - 1;
+  phase = 0;
+  stationValues.arts = "The melody you chose";
+  pendingResult = null;
+  lastResult = null;
+  resultSaved = false;
+  setCapturedPhoto("");
+  setCardPhoto("");
+  setResultBackVisible(false);
+  render();
+  show("quiz");
+}
+
+function returnToCamera() {
+  if (!lastResult) return;
+  pendingResult = lastResult;
+  show("camera");
+
+  if (capturedPhoto) {
+    $("camera-status").textContent = "Photo captured. Use it for your card, or retake it.";
+    $("camera-error").textContent = "";
+    updateCameraUI();
+  } else {
+    startCamera();
+  }
+}
+
 function startArchive() {
   current = 0;
   phase = 0;
   scores = {};
   chosen = [];
   participantName = "";
+  pendingResult = null;
+  lastResult = null;
+  resultSaved = false;
+  setCapturedPhoto("");
+  setCardPhoto("");
+  setResultBackVisible(false);
   stationValues = {
     sports: "Perseverance",
     hidden: "The Compass",
@@ -439,6 +681,12 @@ function goHome() {
   scores = {};
   chosen = [];
   participantName = "";
+  pendingResult = null;
+  lastResult = null;
+  resultSaved = false;
+  setCapturedPhoto("");
+  setCardPhoto("");
+  setResultBackVisible(false);
   show("intro");
 }
 function beginQuestions() {
@@ -482,6 +730,12 @@ function setTinWords(words) {
   });
 }
 function renderBadgeRecord(badge) {
+  pendingResult = null;
+  lastResult = null;
+  resultSaved = false;
+  setCapturedPhoto("");
+  setCardPhoto("");
+  setResultBackVisible(false);
   const name = badge.participant_name || "Archive Keeper";
   const resultCopy = badge.result_copy || "";
   $("result-kicker").textContent = `${name}, your guiding constellation is`;
@@ -569,6 +823,15 @@ $("participant-name").addEventListener("input", (event) => {
   input.setSelectionRange(cursor, cursor);
 });
 $("start-archive").addEventListener("click", startQuiz);
+$("camera-capture").addEventListener("click", capturePhoto);
+$("camera-retake").addEventListener("click", startCamera);
+$("camera-upload").addEventListener("change", handlePhotoUpload);
+$("camera-back").addEventListener("click", returnToFinalQuestion);
+$("skip-photo").addEventListener("click", () => {
+  setCapturedPhoto("");
+  finishResult();
+});
+$("use-photo").addEventListener("click", finishResult);
 $("back").addEventListener("click", () => {
   if (phase === 1) {
     phase = 0;
@@ -579,6 +842,7 @@ $("back").addEventListener("click", () => {
   }
 });
 $("restart").addEventListener("click", startArchive);
+$("result-back").addEventListener("click", returnToCamera);
 $("home-redirect").addEventListener("click", goHome);
 $("retrieve-form").addEventListener("submit", retrieveBadge);
 $("copy-claim-code").addEventListener("click", async () => {

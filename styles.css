@@ -334,6 +334,27 @@
   box-shadow: 0 7px 0 #d8a9bb;
 }
 
+.result-back {
+  display: block;
+  margin: 20px auto 0;
+  border: 0;
+  padding: 0;
+  color: #73584f;
+  background: transparent;
+  font: 800 13px Manrope, sans-serif;
+  cursor: pointer;
+}
+
+.result-back:hover {
+  color: #b26f8a;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.result-back[hidden] {
+  display: none;
+}
+
 @media (max-width: 760px) {
   .screen.result.active { padding: 4vh 5vw; overflow: auto; }
   .result-card { min-height: auto; padding: 28px 0 34px; }
@@ -641,4 +662,357 @@
   font-size: 13px;
   font-weight: 800;
   line-height: 1.35;
+}
+
+/* Selfie capture screen */
+.camera-screen {
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  padding: 5vh 6vw;
+}
+
+.camera-card {
+  display: grid;
+  grid-template-columns: minmax(250px, 390px) minmax(0, 1fr);
+  grid-template-rows: auto auto auto auto auto auto;
+  column-gap: clamp(34px, 6vw, 76px);
+  width: min(900px, 100%);
+  padding: 48px 58px;
+  border-radius: 28px;
+  background: #4b91b3;
+  box-shadow: 0 24px 60px #4d8eaa88;
+  color: #f8fcff;
+}
+
+.camera-card > .eyebrow,
+.camera-card > h2,
+.camera-card > .camera-lead,
+.camera-card > .camera-status,
+.camera-card > .camera-controls,
+.camera-card > .camera-finish,
+.camera-card > .camera-back-row,
+.camera-card > .camera-error {
+  grid-column: 2;
+}
+
+.camera-card > .eyebrow {
+  grid-row: 1;
+  color: #dff4f8;
+}
+
+.camera-card h2 {
+  grid-row: 2;
+  margin: 22px 0 14px;
+  color: #f8fcff;
+  font-size: clamp(42px, 5vw, 70px);
+  line-height: .94;
+  letter-spacing: -.07em;
+}
+
+.camera-card h2 em {
+  color: #fff6b0;
+  font-style: normal;
+}
+
+.camera-lead {
+  grid-row: 3;
+  max-width: 470px;
+  margin: 0;
+  color: #e9f8fc;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.camera-view {
+  position: relative;
+  grid-column: 1;
+  grid-row: 1 / span 6;
+  width: min(100%, 390px);
+  aspect-ratio: 1132 / 1390;
+  margin: auto;
+}
+
+.camera-body {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+}
+
+#camera-preview,
+#camera-captured,
+.camera-placeholder {
+  position: absolute;
+  left: 31.5%;
+  top: 36.8%;
+  z-index: 2;
+  width: 37.2%;
+  height: 36.1%;
+  border: 0;
+  border-radius: 3%;
+  object-fit: cover;
+}
+
+#camera-preview {
+  transform: scaleX(-1);
+  background: #090a0c;
+}
+
+.camera-placeholder {
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: #090a0ce8;
+  color: #e9f8fc;
+  text-align: center;
+}
+
+.camera-placeholder span {
+  color: #fff6b0;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.camera-placeholder p {
+  max-width: 130px;
+  margin: 0 auto;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.camera-view [hidden] {
+  display: none !important;
+}
+
+.camera-status {
+  grid-row: 4;
+  min-height: 22px;
+  margin: 22px 0 0;
+  color: #fff6b0;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.camera-controls {
+  grid-row: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.camera-controls .primary,
+.camera-finish .primary {
+  margin: 0;
+}
+
+.camera-controls .primary span,
+.camera-finish .primary span {
+  margin-left: 16px;
+}
+
+.camera-controls .primary:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+  box-shadow: none;
+}
+
+.camera-secondary,
+.camera-upload,
+.camera-skip {
+  border: 0;
+  border-radius: 999px;
+  padding: 13px 16px;
+  color: #315f80;
+  background: #dff4f8;
+  font: 800 13px Manrope, sans-serif;
+  cursor: pointer;
+}
+
+.camera-upload {
+  position: relative;
+  display: inline-block;
+}
+
+.camera-upload input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.camera-finish {
+  grid-row: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 1px solid #e7f8fc55;
+}
+
+.camera-back-row {
+  grid-row: 7;
+  margin-top: 12px;
+}
+
+.camera-back {
+  border: 0;
+  padding: 0;
+  color: #e9f8fc;
+  background: transparent;
+  font: 800 12px Manrope, sans-serif;
+  cursor: pointer;
+}
+
+.camera-back:hover {
+  color: #fff6b0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.camera-skip {
+  padding: 5px 0;
+  color: #e9f8fc;
+  background: transparent;
+  font-size: 12px;
+}
+
+.camera-error {
+  grid-row: 8;
+  min-height: 20px;
+  margin: 12px 0 0;
+  color: #fff6b0;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+/* Keep the portrait inside the photograph box on card-pink.png. */
+.tin-card-stack {
+  position: absolute;
+  z-index: 2;
+  top: 10%;
+  left: 30%;
+  width: 38%;
+  transform: rotate(-4deg);
+  filter: drop-shadow(0 14px 12px rgb(93 58 72 / 28%));
+}
+
+.tin-card-stack .tin-card {
+  position: relative;
+  z-index: 0;
+  inset: auto;
+  display: block;
+  width: 100%;
+  height: auto;
+  transform: none;
+  filter: none;
+}
+
+.tin-card-photo {
+  position: absolute;
+  z-index: 1;
+  left: 7.2%;
+  top: 13%;
+  width: 35%;
+  height: 68.5%;
+  border-radius: 1px;
+  object-fit: cover;
+}
+
+.tin-card-photo[hidden] {
+  display: none;
+}
+
+@media (max-width: 780px) {
+  .camera-screen {
+    padding: 4vh 6vw;
+  }
+
+  .camera-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 36px 28px 30px;
+  }
+
+  .camera-card h2 {
+    margin-top: 20px;
+    font-size: clamp(42px, 12vw, 60px);
+  }
+
+  .camera-lead {
+    font-size: 14px;
+  }
+
+  .camera-view {
+    width: min(100%, 350px);
+    margin: 24px auto 4px;
+    order: 4;
+  }
+
+  .camera-status {
+    order: 5;
+    margin-top: 12px;
+  }
+
+  .camera-controls {
+    order: 6;
+    margin-top: 14px;
+  }
+
+  .camera-finish {
+    order: 7;
+  }
+
+  .camera-back-row {
+    order: 8;
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  .camera-error {
+    order: 9;
+  }
+}
+
+@media (max-width: 430px) {
+  .camera-card {
+    padding: 30px 20px 24px;
+    border-radius: 22px;
+  }
+
+  .camera-card h2 {
+    font-size: 43px;
+  }
+
+  .camera-controls > * {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: center;
+  }
+
+  .camera-finish {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .camera-finish .primary,
+  .camera-skip {
+    width: 100%;
+    text-align: center;
+  }
 }

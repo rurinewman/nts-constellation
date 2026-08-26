@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=tin-result" />
+  <link rel="stylesheet" href="styles.css?v=tin-camera" />
   <link rel="stylesheet" href="questions/question-01.css" />
   <link rel="stylesheet" href="questions/question-02.css" />
   <link rel="stylesheet" href="questions/question-03.css" />
@@ -78,6 +78,38 @@
       </div>
     </section>
 
+    <section class="screen camera-screen" id="camera">
+      <div class="camera-card">
+        <div class="eyebrow">THE ARCHIVE · YOUR PORTRAIT</div>
+        <h2>Place yourself<br><em>in the archive.</em></h2>
+        <p class="camera-lead">Take a quick selfie for the photograph on your constellation card. Your image stays in this session and is not sent with your badge.</p>
+        <div class="camera-view" id="camera-view">
+          <img class="camera-body" src="assets/camera-body.png" alt="" aria-hidden="true" />
+          <video id="camera-preview" autoplay playsinline muted hidden aria-label="Live front-camera preview"></video>
+          <img id="camera-captured" alt="Your captured portrait" hidden />
+          <div class="camera-placeholder" id="camera-placeholder">
+            <span>✦</span>
+            <p>Allow camera access to begin.</p>
+          </div>
+        </div>
+        <p class="camera-status" id="camera-status" role="status" aria-live="polite">Requesting camera access…</p>
+        <canvas id="camera-canvas" hidden></canvas>
+        <div class="camera-controls">
+          <button type="button" class="primary" id="camera-capture" disabled>Take photo <span>↗</span></button>
+          <button type="button" class="camera-secondary" id="camera-retake" hidden>Retake photo</button>
+          <label class="camera-upload" for="camera-upload">Use a photo<input id="camera-upload" type="file" accept="image/*" capture="user" /></label>
+        </div>
+        <div class="camera-finish">
+          <button type="button" class="camera-skip" id="skip-photo">Skip this step</button>
+          <button type="button" class="primary" id="use-photo" hidden>Use this photo <span>↗</span></button>
+        </div>
+        <div class="camera-back-row">
+          <button type="button" class="camera-back" id="camera-back">← Back to final question</button>
+        </div>
+        <p class="camera-error" id="camera-error" role="alert" aria-live="polite"></p>
+      </div>
+    </section>
+
     <section class="screen quiz" id="quiz">
       <div class="quiz-top"><div class="eyebrow">THE ARCHIVE · ENTRY <span id="entry-number">01</span></div><div class="progress-dots" id="progress-dots"></div><div class="progress-copy"><span id="progress-label">01</span> / 09</div></div>
       <div class="flipbook">
@@ -97,7 +129,10 @@
         <div class="tin-scene" aria-label="A pink constellation card resting inside an open silver keepsake tin">
           <img class="tin-image" src="assets/tin.png" alt="Open silver keepsake tin" />
           <span class="tin-card-shadow" aria-hidden="true"></span>
-          <img class="tin-card" src="assets/card-pink.png" alt="Pink star-bordered constellation card" />
+          <div class="tin-card-stack">
+            <img class="tin-card" src="assets/card-pink.png" alt="Pink star-bordered constellation card" />
+            <img class="tin-card-photo" id="tin-card-photo" alt="Your portrait on the constellation card" hidden />
+          </div>
           <div class="tin-items" aria-hidden="true">
             <span class="tin-prop tin-prop-camera"></span>
             <span class="tin-prop tin-prop-glasses"></span>
@@ -130,6 +165,7 @@
           <button type="button" id="copy-claim-code">Copy code</button>
           <p id="save-status">Save this code to retrieve your constellation badge later.</p>
         </div>
+        <button type="button" class="result-back" id="result-back" hidden>← Back to portrait</button>
         <button class="primary" id="restart">Begin another journey <span>↗</span></button>
       </div>
     </section>
@@ -145,6 +181,6 @@
   <script src="questions/question-07.js?v=audio-final"></script>
   <script src="questions/question-08.js?v=audio-final"></script>
   <script src="questions/question-09.js?v=no-melody-input"></script>
-  <script src="app.js?v=audio-select-fix"></script>
+  <script src="app.js?v=camera-capture"></script>
 </body>
 </html>
