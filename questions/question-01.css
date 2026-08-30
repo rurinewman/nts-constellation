@@ -5,7 +5,7 @@ body[data-question="0"] {
 }
 
 body[data-question="0"] .quiz .flipbook {
-  background: linear-gradient(90deg, #7fb5a8 0%, #7fb5a8 50%, #eecf8b 50.1%, #eecf8b 100%);
+  background: linear-gradient(90deg, #7fb5a8 0%, #7fb5a8 50%, #BFD2C1 50.1%, #BFD2C1 100%);
 
 }
 
