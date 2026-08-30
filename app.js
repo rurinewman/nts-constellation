@@ -328,11 +328,11 @@ const TIN_ICON_LAYOUT = [
   { x: "88%", y: "70%", size: "17%", fontSize: "clamp(34px, 5.2vw, 78px)", rot: "-7deg" },
 ];
 const TIN_WORD_LAYOUT = [
-  { x: "5%", y: "52%", rot: "-90deg" },
-  { x: "95%", y: "57%", rot: "90deg" },
-  { x: "9%", y: "16%", rot: "-20deg" },
-  { x: "91%", y: "16%", rot: "20deg" },
-  { x: "50%", y: "103%", rot: "0deg" },
+  { x: "calc(21.875% - 19px)", y: "36%", rot: "-90deg" },
+  { x: "calc(78.125% + 19px)", y: "36%", rot: "90deg" },
+  { x: "calc(21.875% - 19px)", y: "72%", rot: "-90deg" },
+  { x: "calc(78.125% + 19px)", y: "72%", rot: "90deg" },
+  { x: "50%", y: "calc(94.92% + 20px)", rot: "0deg" },
 ];
 const MAX_TIN_ICONS = 4;
 const CONSTELLATION_ICON_SETS = {
