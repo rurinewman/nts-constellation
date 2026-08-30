@@ -2877,7 +2877,45 @@ select {
 .tin-card-stack .license-fields span {
   overflow: visible;
   text-overflow: clip;
-  font-size: min(.48vw, 7px);
+  font-size: min(.56vw, 8px);
+  line-height: 1;
+}
+
+/* Align the live values with each portrait template's printed dotted rows. */
+.tin-card-stack[data-card-color="blue"] #license-name {
+  top: 40.4%;
+}
+
+.tin-card-stack[data-card-color="blue"] #license-dob {
+  top: 43.1%;
+}
+
+.tin-card-stack[data-card-color="blue"] #license-domain {
+  top: 45.7%;
+}
+
+.tin-card-stack[data-card-color="green"] #license-name {
+  top: 40%;
+}
+
+.tin-card-stack[data-card-color="green"] #license-dob {
+  top: 42.5%;
+}
+
+.tin-card-stack[data-card-color="green"] #license-domain {
+  top: 45%;
+}
+
+.tin-card-stack[data-card-color="pink"] #license-name {
+  top: 41.2%;
+}
+
+.tin-card-stack[data-card-color="pink"] #license-dob {
+  top: 43.5%;
+}
+
+.tin-card-stack[data-card-color="pink"] #license-domain {
+  top: 45.8%;
 }
 
 /* Lift the card stack clear of the hinge so it sits inside the upper lid. */
