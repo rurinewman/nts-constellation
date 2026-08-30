@@ -296,16 +296,16 @@ const DEFAULT_CARD_COLORS = {
   corvus: "green",
 };
 const CONSTELLATION_ART = {
-  cetus: "assets/constellation-cetus.png",
-  corvus: "assets/constellation-corvus.png",
-  delphinus: "assets/constellation-delphinus.png",
-  draco: "assets/constellation-draco.png",
-  lynx: "assets/constellation-lynx.png",
-  pegasus: "assets/constellation-pegasus.png",
-  phoenix: "assets/constellation-phoenix.png",
-  vulpecula: "assets/constellation-vulpecula.png",
-  hydra: "assets/constellation-hydra.png",
-  lupus: "assets/constellation-lupus.png",
+  cetus: "assets/constellation-characters/cetus.png",
+  corvus: "assets/constellation-characters/corvus.png",
+  delphinus: "assets/constellation-characters/delphinus.png",
+  draco: "assets/constellation-characters/draco.png",
+  lynx: "assets/constellation-characters/lynx.png",
+  pegasus: "assets/constellation-characters/pegasus.png",
+  phoenix: "assets/constellation-characters/phoenix.png",
+  vulpecula: "assets/constellation-characters/vulpecula.png",
+  hydra: "assets/constellation-characters/hydra.png",
+  lupus: "assets/constellation-characters/lupus.png",
 };
 const CUSTOM_TIN_ICON_OPTIONS = [
   "🔥",
@@ -329,6 +329,7 @@ const TIN_ICON_LAYOUT = [
   { x: "33%", y: "86%", size: "11%", rot: "6deg" },
   { x: "55%", y: "88%", size: "12%", rot: "-4deg" },
 ];
+const MAX_TIN_ICONS = 6;
 const CONSTELLATION_ICON_SETS = {
   ursa: ["⚓", "🧸", "🗻", "🕯️", "🧭", "🌲"],
   pegasus: ["🪽", "☁️", "🎨", "🪁", "📸", "✨"],
@@ -682,11 +683,12 @@ function handlePhotoUpload(event) {
 function renderTinIcons(key = resultConstellationKey) {
   const holder = $("tin-icons");
   if (!holder) return;
-  const icons = selectedTinIcons.length
-    ? selectedTinIcons
+  const customIcons = normalizeTinIcons(selectedTinIcons);
+  const icons = customIcons.length
+    ? customIcons
     : CONSTELLATION_ICON_SETS[key] || CONSTELLATION_ICON_SETS.pegasus;
   holder.innerHTML = "";
-  icons.slice(0, TIN_ICON_LAYOUT.length).forEach((icon, index) => {
+  icons.slice(0, MAX_TIN_ICONS).forEach((icon, index) => {
     const layout = TIN_ICON_LAYOUT[index];
     const item = document.createElement("span");
     item.className = "tin-icon";
@@ -725,6 +727,18 @@ function renderCardColorOptions() {
   });
 }
 
+function normalizeTinIcons(icons) {
+  return [...new Set(Array.isArray(icons) ? icons : [])]
+    .filter((icon) => CUSTOM_TIN_ICON_OPTIONS.includes(icon))
+    .slice(0, MAX_TIN_ICONS);
+}
+
+function getDefaultTinIcons(key) {
+  return normalizeTinIcons(
+    CONSTELLATION_ICON_SETS[key] || CONSTELLATION_ICON_SETS.pegasus,
+  );
+}
+
 function renderIconOptions() {
   const holder = $("icon-options");
   if (!holder) return;
@@ -742,9 +756,10 @@ function renderIconOptions() {
 }
 
 function toggleTinIcon(icon) {
+  selectedTinIcons = normalizeTinIcons(selectedTinIcons);
   if (selectedTinIcons.includes(icon)) {
     selectedTinIcons = selectedTinIcons.filter((selectedIcon) => selectedIcon !== icon);
-  } else if (selectedTinIcons.length < TIN_ICON_LAYOUT.length) {
+  } else if (selectedTinIcons.length < MAX_TIN_ICONS) {
     selectedTinIcons = [...selectedTinIcons, icon];
   }
   renderIconOptions();
@@ -754,9 +769,7 @@ function toggleTinIcon(icon) {
 function openCustomize() {
   if (!pendingResult) return;
   selectedCardColor = selectedCardColor || getCardColorForConstellation(resultConstellationKey);
-  if (!selectedTinIcons.length) {
-    selectedTinIcons = [...(CONSTELLATION_ICON_SETS[resultConstellationKey] || CONSTELLATION_ICON_SETS.pegasus)];
-  }
+  selectedTinIcons = normalizeTinIcons(selectedTinIcons);
   renderCardColorOptions();
   renderIconOptions();
   show("customize");
@@ -812,7 +825,7 @@ function restoreDraftState(draft) {
   participantDob = draft.participantDob || "";
   resultConstellationKey = draft.resultConstellationKey || "pegasus";
   selectedCardColor = draft.selectedCardColor || getCardColorForConstellation(resultConstellationKey);
-  selectedTinIcons = Array.isArray(draft.selectedTinIcons) ? draft.selectedTinIcons : [];
+  selectedTinIcons = normalizeTinIcons(draft.selectedTinIcons);
   pendingResult = draft.pendingResult || null;
   lastResult = draft.lastResult || null;
   $("participant-name").value = participantName;
@@ -886,7 +899,7 @@ function reveal() {
 const c = constellations[key] || constellations.pegasus;
   resultConstellationKey = key;
   selectedCardColor = getCardColorForConstellation(key);
-  selectedTinIcons = [];
+  selectedTinIcons = getDefaultTinIcons(key);
   setResultCardTemplate(selectedCardColor);
   const resultCopy = `Like ${c[0]}, you are guided by ${c[2].toLowerCase()} Your constellation is a reflection of the values shaping your journey today.`;
   const selectedWords = makeTinWords(c);
