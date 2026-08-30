@@ -1,4 +1,5 @@
 const ARCHIVE_TABLE = "constellation_badges";
+const PHOTO_BUCKET = "constellation-photos";
 const LOCAL_BADGE_KEY = "constellation_badges";
 const LOCAL_DRAFT_KEY = "constellation_quiz_draft";
 
@@ -9,6 +10,21 @@ function getArchiveConfig() {
 function hasSupabaseConfig() {
   const config = getArchiveConfig();
   return Boolean(config.supabaseUrl && config.supabaseAnonKey);
+}
+
+function getSupabaseHeaders(extraHeaders = {}) {
+  const config = getArchiveConfig();
+  const headers = {
+    apikey: config.supabaseAnonKey,
+    ...extraHeaders,
+  };
+
+  // New sb_publishable keys are API keys, not JWTs, so they must not be sent
+  // as a Bearer token. Keep the legacy anon-key path working as well.
+  if (!config.supabaseAnonKey.startsWith("sb_")) {
+    headers.Authorization = `Bearer ${config.supabaseAnonKey}`;
+  }
+  return headers;
 }
 
 function makeClaimCode(name, constellation) {
@@ -69,9 +85,7 @@ async function supabaseRequest(path, options = {}) {
   const response = await fetch(`${config.supabaseUrl}/rest/v1/${path}`, {
     ...options,
     headers: {
-      apikey: config.supabaseAnonKey,
-      Authorization: `Bearer ${config.supabaseAnonKey}`,
-      "Content-Type": "application/json",
+      ...getSupabaseHeaders({ "Content-Type": "application/json" }),
       ...options.headers,
     },
   });
@@ -82,6 +96,58 @@ async function supabaseRequest(path, options = {}) {
 
   if (response.status === 204) return null;
   return response.json();
+}
+
+function encodeStoragePath(path) {
+  return path.split("/").map((part) => encodeURIComponent(part)).join("/");
+}
+
+function getPublicPhotoUrl(photoPath) {
+  const config = getArchiveConfig();
+  if (!config.supabaseUrl || !photoPath) return "";
+  return `${config.supabaseUrl}/storage/v1/object/public/${PHOTO_BUCKET}/${encodeStoragePath(photoPath)}`;
+}
+
+function dataUrlToBlob(dataUrl) {
+  const [metadata, encodedData] = String(dataUrl).split(",", 2);
+  if (!metadata?.startsWith("data:") || !encodedData) {
+    throw new Error("The captured photo has an invalid data format.");
+  }
+
+  const mimeType = metadata.match(/^data:([^;,]+)/i)?.[1] || "image/jpeg";
+  const binary = atob(encodedData);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return new Blob([bytes], { type: mimeType });
+}
+
+async function uploadBadgePhoto(dataUrl, claimCode) {
+  if (!dataUrl) return "";
+
+  const config = getArchiveConfig();
+  const photoPath = `portraits/${claimCode}.jpg`;
+  const response = await fetch(
+    `${config.supabaseUrl}/storage/v1/object/${PHOTO_BUCKET}/${encodeStoragePath(photoPath)}`,
+    {
+      method: "POST",
+      headers: getSupabaseHeaders({
+        "Content-Type": "image/jpeg",
+        "x-upsert": "false",
+      }),
+      body: dataUrlToBlob(dataUrl),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Photo upload failed: ${response.status}`);
+  }
+  return photoPath;
+}
+
+function getBadgePhotoUrl(badge) {
+  return badge.photo_url || getPublicPhotoUrl(badge.photo_path) || badge.photo_data || "";
 }
 
 async function saveBadgeRecord(payload) {
@@ -96,13 +162,26 @@ async function saveBadgeRecord(payload) {
     hidden_symbol: payload.hidden_symbol,
     melody: payload.melody,
     signature_data: payload.signature_data || "",
+    photo_path: "",
     selected_words: payload.selected_words,
     selected_answers: payload.selected_answers,
     created_at: new Date().toISOString(),
   };
 
   if (!hasSupabaseConfig()) {
-    return saveLocalBadge(badge);
+    return {
+      badge: saveLocalBadge({ ...badge, photo_data: payload.photo_data || "" }),
+      photoError: "",
+    };
+  }
+
+  let photoError = "";
+  if (payload.photo_data) {
+    try {
+      badge.photo_path = await uploadBadgePhoto(payload.photo_data, badge.claim_code);
+    } catch (error) {
+      photoError = error?.message || "Photo upload failed.";
+    }
   }
 
   const [savedBadge] = await supabaseRequest(ARCHIVE_TABLE, {
@@ -110,7 +189,7 @@ async function saveBadgeRecord(payload) {
     headers: { Prefer: "return=representation" },
     body: JSON.stringify(badge),
   });
-  return savedBadge;
+  return { badge: savedBadge, photoError };
 }
 
 async function findBadgeRecord(claimCode) {

@@ -1196,7 +1196,7 @@ function renderBadgeRecord(badge) {
   lastResult = null;
   resultSaved = false;
   setCapturedPhoto("");
-  setCardPhoto("");
+  setCardPhoto(getBadgePhotoUrl(badge));
   setCardSignature("");
   setResultBackVisible(false);
   const name = badge.participant_name || "Archive Keeper";
@@ -1234,7 +1234,7 @@ async function saveCurrentBadge(constellation, selectedWords, resultCopy) {
   $("save-status").textContent = "Writing your constellation into the archive.";
 
   try {
-    const badge = await saveBadgeRecord({
+    const { badge, photoError } = await saveBadgeRecord({
       participant_name: participantName || "Archive Keeper",
       constellation_name: constellation[0],
       constellation_title: constellation[1],
@@ -1244,13 +1244,18 @@ async function saveCurrentBadge(constellation, selectedWords, resultCopy) {
       hidden_symbol: stationValues.hidden,
       melody: stationValues.arts,
       signature_data: signatureData,
+      photo_data: capturedPhoto,
       selected_words: selectedWords,
       selected_answers: chosen.map(cleanChoiceText).filter(Boolean),
     });
     $("claim-code-output").textContent = badge.claim_code;
-    $("save-status").textContent = hasSupabaseConfig()
-      ? "Saved to the archive. Use this code to retrieve the badge later."
-      : "Saved on this browser for testing. Add Supabase keys to retrieve from any device.";
+    if (!hasSupabaseConfig()) {
+      $("save-status").textContent = "Saved on this browser for testing. Add Supabase keys to retrieve from any device.";
+    } else if (photoError) {
+      $("save-status").textContent = "Badge saved, but the portrait could not be uploaded. Check the Supabase Storage setup.";
+    } else {
+      $("save-status").textContent = "Saved to the archive with your portrait. Use this code to retrieve the badge later.";
+    }
   } catch (error) {
     $("claim-code-output").textContent = "Could not save";
     $("save-status").textContent = "The badge is visible, but the archive database could not be reached.";

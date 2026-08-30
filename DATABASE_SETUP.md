@@ -1,12 +1,14 @@
 # Constellation Badge Database Setup
 
-This site can save/retrieve badges without registration using a claim code.
+This site can save/retrieve badges without registration using a claim code. Completed badges can also include the cropped portrait captured during the archive journey.
 
 ## 1. Create the Supabase table
 
 1. Open your Supabase project.
 2. Go to **SQL Editor**.
-3. Paste and run the SQL in `supabase-schema.sql`.
+3. Paste and run the full SQL in `supabase-schema.sql`.
+
+The SQL creates the `constellation-photos` public Storage bucket, adds the `photo_path` column, and adds the upload policy needed by the browser. Public Storage serving does not need a read policy. The bucket is public so a retrieved badge can display its portrait from a normal image URL; use an authenticated/private Storage design instead if portraits must not be publicly addressable.
 
 ## 2. Add your project keys
 
@@ -38,7 +40,7 @@ Unfinished quiz progress is saved in this browser with `localStorage`.
 That means a participant can refresh or accidentally close the tab and continue where they left off on the same device/browser.
 
 The draft includes quiz progress, selected answers, name, DOB, station values, card colour, and icon choices.
-It does not save the camera/uploaded photo before the final tin is generated, because photos are too large and sensitive for browser draft storage.
+It does not save the camera/uploaded photo before the final tin is generated, because photos are too large and sensitive for browser draft storage. The cropped portrait is uploaded only when the participant completes the final customization and the badge is saved.
 
 Once the final tin is generated and the claim code is created, the unfinished draft is cleared.
 
