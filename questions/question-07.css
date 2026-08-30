@@ -8,7 +8,7 @@ body[data-question="6"] .quiz .flipbook {
   background: linear-gradient(90deg, #6fa8c9 0%, #6fa8c9 50%, #5f4d46 50.1%, #5f4d46 100%);
 }
 
-@media (min-width: 781px) {
+@media (min-width: 901px) {
   body[data-question="6"] .quiz .question-image.visible {
     width: var(--question-image-size) !important;
     transform: translate(calc(-50% + var(--question-image-offset-x)), calc(-50% + var(--question-image-offset-y))) !important;

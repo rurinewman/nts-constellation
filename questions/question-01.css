@@ -9,7 +9,7 @@ body[data-question="0"] .quiz .flipbook {
 
 }
 
-@media (min-width: 781px) {
+@media (min-width: 901px) {
   body[data-question="0"] .quiz .question-image.visible {
     width: var(--question-image-size) !important;
     transform: translate(calc(-50% + var(--question-image-offset-x)), calc(-50% + var(--question-image-offset-y))) !important;
