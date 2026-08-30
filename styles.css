@@ -2731,3 +2731,15 @@ select {
     appearance: none;
   }
 }
+
+/* Keep mobile quiz artwork true to its source colors on darker page skins. */
+@media (max-width: 900px) {
+  body:has(.quiz.active) .stars {
+    opacity: .16;
+    mix-blend-mode: normal;
+  }
+
+  .quiz .question-image.visible {
+    mix-blend-mode: normal !important;
+  }
+}
