@@ -322,14 +322,12 @@ const CUSTOM_TIN_ICON_OPTIONS = [
   "✨",
 ];
 const TIN_ICON_LAYOUT = [
-  { x: "24%", y: "67%", size: "13%", rot: "-8deg" },
-  { x: "43%", y: "73%", size: "18%", rot: "3deg" },
-  { x: "63%", y: "65%", size: "13%", rot: "8deg" },
-  { x: "76%", y: "81%", size: "15%", rot: "-7deg" },
-  { x: "33%", y: "86%", size: "11%", rot: "6deg" },
-  { x: "55%", y: "88%", size: "12%", rot: "-4deg" },
+  { x: "12%", y: "27%", size: "18%", fontSize: "clamp(34px, 5.6vw, 84px)", rot: "-8deg" },
+  { x: "45%", y: "69%", size: "12%", fontSize: "clamp(24px, 3.5vw, 54px)", rot: "3deg" },
+  { x: "68%", y: "21%", size: "13%", fontSize: "clamp(28px, 4.3vw, 66px)", rot: "8deg" },
+  { x: "88%", y: "70%", size: "17%", fontSize: "clamp(34px, 5.2vw, 78px)", rot: "-7deg" },
 ];
-const MAX_TIN_ICONS = 6;
+const MAX_TIN_ICONS = 4;
 const CONSTELLATION_ICON_SETS = {
   ursa: ["⚓", "🧸", "🗻", "🕯️", "🧭", "🌲"],
   pegasus: ["🪽", "☁️", "🎨", "🪁", "📸", "✨"],
@@ -696,6 +694,7 @@ function renderTinIcons(key = resultConstellationKey) {
     item.style.setProperty("--tin-icon-x", layout.x);
     item.style.setProperty("--tin-icon-y", layout.y);
     item.style.setProperty("--tin-icon-size", layout.size);
+    item.style.setProperty("--tin-icon-font-size", layout.fontSize);
     item.style.setProperty("--tin-icon-rotation", layout.rot);
     holder.appendChild(item);
   });
