@@ -327,6 +327,13 @@ const TIN_ICON_LAYOUT = [
   { x: "68%", y: "21%", size: "13%", fontSize: "clamp(28px, 4.3vw, 66px)", rot: "8deg" },
   { x: "88%", y: "70%", size: "17%", fontSize: "clamp(34px, 5.2vw, 78px)", rot: "-7deg" },
 ];
+const TIN_WORD_LAYOUT = [
+  { x: "5%", y: "52%", rot: "-90deg" },
+  { x: "95%", y: "57%", rot: "90deg" },
+  { x: "9%", y: "16%", rot: "-20deg" },
+  { x: "91%", y: "16%", rot: "20deg" },
+  { x: "50%", y: "103%", rot: "0deg" },
+];
 const MAX_TIN_ICONS = 4;
 const CONSTELLATION_ICON_SETS = {
   ursa: ["⚓", "🧸", "🗻", "🕯️", "🧭", "🌲"],
@@ -1011,15 +1018,28 @@ function makeTinWords(constellation) {
     ...words,
   ].slice(0, 5);
 }
-function setTinWords(words) {
-  const fallbackWords = ["wonder", "courage", "growth", "connection", "direction"];
-  [...fallbackWords].forEach((word, index) => {
-    const label = $(`tin-word-${["one", "two", "three", "four", "five"][index]}`);
-    if (label) label.textContent = words[index] || word;
+function setTinWords(words = []) {
+  const savedWords = [...new Set(
+    (Array.isArray(words) ? words : [])
+      .map((word) => String(word).trim())
+      .filter(Boolean),
+  )];
+  ["one", "two", "three", "four", "five"].forEach((slot, index) => {
+    const label = $(`tin-word-${slot}`);
+    if (label) label.textContent = savedWords[index] || "";
   });
-  ["one", "two", "three"].forEach((slot, index) => {
-    const label = $(`tin-item-copy-${slot}`);
-    if (label) label.textContent = words[index + 2] || words[index] || fallbackWords[index];
+  const ring = $("tin-word-ring");
+  if (!ring) return;
+  ring.innerHTML = "";
+  savedWords.forEach((word, index) => {
+    const layout = TIN_WORD_LAYOUT[index % TIN_WORD_LAYOUT.length];
+    const label = document.createElement("span");
+    label.className = "tin-word";
+    label.textContent = word;
+    label.style.setProperty("--tin-word-x", layout.x);
+    label.style.setProperty("--tin-word-y", layout.y);
+    label.style.setProperty("--tin-word-rotation", layout.rot);
+    ring.appendChild(label);
   });
 }
 function renderBadgeRecord(badge) {

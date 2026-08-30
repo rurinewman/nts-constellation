@@ -451,28 +451,32 @@
   filter: drop-shadow(0 12px 9px rgb(62 53 60 / 34%));
 }
 
-.tin-item-copy {
+.tin-word-ring {
   position: absolute;
+  inset: 0;
   z-index: 4;
-  top: 56%;
-  left: 55%;
-  width: 46%;
-  color: #fffafa;
+  pointer-events: none;
+}
+
+.tin-word-ring .tin-word {
+  position: absolute;
+  left: var(--tin-word-x);
+  top: var(--tin-word-y);
+  z-index: 4;
+  width: min(170px, 22%);
+  max-width: 22%;
+  color: #71584f;
   font-size: clamp(10px, 1.35vw, 17px);
-  font-weight: 800;
-  line-height: 1.12;
+  font-weight: 900;
+  line-height: 1.1;
   text-align: center;
-  text-shadow: 0 2px 5px rgb(53 47 55 / 50%);
-  transform: translateX(-50%);
+  overflow-wrap: anywhere;
+  text-shadow: none;
+  transform: translate(-50%, -50%) rotate(var(--tin-word-rotation));
 }
 
-.tin-item-copy span {
-  display: block;
-}
-
-.tin-item-copy span:first-child { color: #fffafa; }
-.tin-item-copy span:nth-child(2) { color: #5b5661; }
-.tin-item-copy span:last-child { color: #ffd9e8; }
+.tin-word-ring .tin-word:nth-child(2n) { color: #5b5661; }
+.tin-word-ring .tin-word:nth-child(3n) { color: #b26f8a; }
 
 .tin-data {
   display: none;
