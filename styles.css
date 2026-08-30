@@ -2701,9 +2701,13 @@ select {
 
 /* Mobile question artwork meets the answer divider like the desktop spread. */
 @media (max-width: 900px) {
+  .quiz .question-pane {
+    padding-bottom: 8px !important;
+  }
+
   .quiz .symbol-pane {
     min-height: 0 !important;
-    padding: clamp(24px, 6vw, 42px) 18px 0 !important;
+    padding: clamp(8px, 2.5vw, 18px) 18px clamp(24px, 5vw, 40px) !important;
     justify-content: flex-end !important;
     overflow: visible !important;
   }
