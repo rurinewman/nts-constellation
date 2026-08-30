@@ -95,6 +95,7 @@ async function saveBadgeRecord(payload) {
     sports_value: payload.sports_value,
     hidden_symbol: payload.hidden_symbol,
     melody: payload.melody,
+    signature_data: payload.signature_data || "",
     selected_words: payload.selected_words,
     selected_answers: payload.selected_answers,
     created_at: new Date().toISOString(),

@@ -349,6 +349,9 @@ const CONSTELLATION_ICON_SETS = {
 };
 let cameraStream = null;
 let capturedPhoto = "";
+let signatureData = "";
+let signaturePadContext = null;
+let signatureDrawing = false;
 let resultConstellationKey = "pegasus";
 let participantDob = "";
 let pendingResult = null;
@@ -532,6 +535,141 @@ function setCardPhoto(dataUrl) {
   image.classList.toggle("visible", Boolean(dataUrl));
 }
 
+function setCardSignature(dataUrl) {
+  const image = $("tin-card-signature");
+  if (!image) return;
+  if (dataUrl) image.src = dataUrl;
+  else image.removeAttribute("src");
+  image.hidden = !dataUrl;
+}
+
+function getSignaturePoint(canvas, event) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top,
+  };
+}
+
+function resizeSignaturePad() {
+  const canvas = $("signature-pad");
+  if (!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+
+  const previous = signatureData;
+  const pixelRatio = Math.max(window.devicePixelRatio || 1, 1);
+  canvas.width = Math.round(rect.width * pixelRatio);
+  canvas.height = Math.round(rect.height * pixelRatio);
+  const context = canvas.getContext("2d");
+  signaturePadContext = context;
+  context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+  context.strokeStyle = "#443b3c";
+  context.lineWidth = Math.max(2, Math.min(4, rect.width / 300));
+  context.lineCap = "round";
+  context.lineJoin = "round";
+
+  if (previous) {
+    const image = new Image();
+    image.onload = () => context.drawImage(image, 0, 0, rect.width, rect.height);
+    image.src = previous;
+  }
+}
+
+function captureSignatureData() {
+  const canvas = $("signature-pad");
+  if (!canvas || !signaturePadContext) return "";
+  const pixels = signaturePadContext.getImageData(0, 0, canvas.width, canvas.height).data;
+  let minX = canvas.width;
+  let minY = canvas.height;
+  let maxX = -1;
+  let maxY = -1;
+
+  for (let y = 0; y < canvas.height; y += 2) {
+    for (let x = 0; x < canvas.width; x += 2) {
+      if (pixels[(y * canvas.width + x) * 4 + 3] === 0) continue;
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+    }
+  }
+
+  if (maxX < 0) return "";
+  const padding = Math.round(12 * Math.max(window.devicePixelRatio || 1, 1));
+  minX = Math.max(0, minX - padding);
+  minY = Math.max(0, minY - padding);
+  maxX = Math.min(canvas.width - 1, maxX + padding);
+  maxY = Math.min(canvas.height - 1, maxY + padding);
+
+  const cropped = document.createElement("canvas");
+  cropped.width = maxX - minX + 1;
+  cropped.height = maxY - minY + 1;
+  cropped.getContext("2d").drawImage(
+    canvas,
+    minX,
+    minY,
+    cropped.width,
+    cropped.height,
+    0,
+    0,
+    cropped.width,
+    cropped.height,
+  );
+  return cropped.toDataURL("image/png");
+}
+
+function finishSignatureStroke(event) {
+  if (!signatureDrawing) return;
+  signatureDrawing = false;
+  const canvas = event.currentTarget;
+  signatureData = captureSignatureData();
+  if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+  saveCurrentDraft("customize");
+}
+
+function initializeSignaturePad() {
+  const canvas = $("signature-pad");
+  if (!canvas) return;
+
+  if (!canvas.dataset.bound) {
+    canvas.dataset.bound = "true";
+    canvas.addEventListener("pointerdown", (event) => {
+      if (!signaturePadContext) resizeSignaturePad();
+      if (!signaturePadContext) return;
+      event.preventDefault();
+      signatureDrawing = true;
+      canvas.setPointerCapture(event.pointerId);
+      const point = getSignaturePoint(canvas, event);
+      signaturePadContext.beginPath();
+      signaturePadContext.moveTo(point.x, point.y);
+    });
+    canvas.addEventListener("pointermove", (event) => {
+      if (!signatureDrawing || !signaturePadContext) return;
+      event.preventDefault();
+      const point = getSignaturePoint(canvas, event);
+      signaturePadContext.lineTo(point.x, point.y);
+      signaturePadContext.stroke();
+    });
+    canvas.addEventListener("pointerup", finishSignatureStroke);
+    canvas.addEventListener("pointercancel", finishSignatureStroke);
+    window.addEventListener("resize", resizeSignaturePad);
+  }
+
+  resizeSignaturePad();
+}
+
+function setSignatureData(dataUrl) {
+  signatureData = typeof dataUrl === "string" ? dataUrl : "";
+  resizeSignaturePad();
+}
+
+function clearSignature() {
+  signatureData = "";
+  resizeSignaturePad();
+  saveCurrentDraft("customize");
+}
+
 function getCardColorForConstellation(key) {
   return DEFAULT_CARD_COLORS[key] || "pink";
 }
@@ -545,6 +683,8 @@ function setResultCardTemplate(selection = selectedCardColor) {
   if (!card) return;
   card.src = template;
   card.alt = `${color} star-bordered constellation license card`;
+  const stack = document.querySelector(".tin-card-stack");
+  if (stack) stack.dataset.cardColor = color;
 }
 
 function getConstellationKeyByName(name) {
@@ -779,6 +919,7 @@ function openCustomize() {
   renderCardColorOptions();
   renderIconOptions();
   show("customize");
+  requestAnimationFrame(initializeSignaturePad);
   saveCurrentDraft("customize");
 }
 
@@ -795,6 +936,7 @@ function getDraftPayload(screen = "quiz") {
     resultConstellationKey,
     selectedCardColor,
     selectedTinIcons,
+    signatureData,
     pendingResult,
     lastResult,
   };
@@ -812,6 +954,7 @@ function resetDraftState() {
   chosen = [];
   participantName = "";
   participantDob = "";
+  signatureData = "";
   resultConstellationKey = "pegasus";
   selectedCardColor = "pink";
   selectedTinIcons = [];
@@ -829,6 +972,7 @@ function restoreDraftState(draft) {
   stationValues = draft.stationValues || stationValues;
   participantName = draft.participantName || "";
   participantDob = draft.participantDob || "";
+  signatureData = typeof draft.signatureData === "string" ? draft.signatureData : "";
   resultConstellationKey = draft.resultConstellationKey || "pegasus";
   selectedCardColor = draft.selectedCardColor || getCardColorForConstellation(resultConstellationKey);
   selectedTinIcons = normalizeTinIcons(draft.selectedTinIcons);
@@ -844,6 +988,7 @@ function restoreDraftState(draft) {
     renderCardColorOptions();
     renderIconOptions();
     show("customize");
+    requestAnimationFrame(initializeSignaturePad);
   } else if (draft.screen === "station-intro") {
     show("station-intro");
   } else if (draft.screen === "name-intro") {
@@ -880,6 +1025,7 @@ function applyResult(constellation, selectedWords, resultCopy) {
   setLicenseFields(participantName, participantDob, constellation[0]);
   setResultConstellationArt(resultConstellationKey);
   setResultCardTemplate(selectedCardColor);
+  setCardSignature(signatureData);
   renderTinIcons(resultConstellationKey);
   setCardPhoto(capturedPhoto);
   setResultBackVisible(true);
@@ -906,6 +1052,7 @@ const c = constellations[key] || constellations.pegasus;
   resultConstellationKey = key;
   selectedCardColor = getCardColorForConstellation(key);
   selectedTinIcons = getDefaultTinIcons(key);
+  signatureData = "";
   setResultCardTemplate(selectedCardColor);
   const resultCopy = `Like ${c[0]}, you are guided by ${c[2].toLowerCase()} Your constellation is a reflection of the values shaping your journey today.`;
   const selectedWords = makeTinWords(c);
@@ -964,6 +1111,7 @@ function startArchive() {
   clearQuizDraft();
   setCapturedPhoto("");
   setCardPhoto("");
+  setCardSignature("");
   renderTinIcons(resultConstellationKey);
   setResultBackVisible(false);
   stationValues = {
@@ -977,6 +1125,7 @@ function goHome() {
   resetDraftState();
   setCapturedPhoto("");
   setCardPhoto("");
+  setCardSignature("");
   renderTinIcons(resultConstellationKey);
   setResultBackVisible(false);
   show("intro");
@@ -1048,6 +1197,7 @@ function renderBadgeRecord(badge) {
   resultSaved = false;
   setCapturedPhoto("");
   setCardPhoto("");
+  setCardSignature("");
   setResultBackVisible(false);
   const name = badge.participant_name || "Archive Keeper";
   const resultCopy = badge.result_copy || "";
@@ -1069,9 +1219,11 @@ function renderBadgeRecord(badge) {
     ? "Save this code to retrieve your constellation badge later."
     : "This badge was retrieved locally.";
   setTinWords(badge.selected_words || []);
+  setSignatureData(badge.signature_data || badge.signature || "");
   selectedCardColor = getCardColorForConstellation(constellationKey);
   selectedTinIcons = [];
   setResultCardTemplate(constellationKey);
+  setCardSignature(signatureData);
   setLicenseFields(name, "", badge.constellation_name);
   setResultConstellationArt(constellationKey);
   renderTinIcons(constellationKey);
@@ -1091,6 +1243,7 @@ async function saveCurrentBadge(constellation, selectedWords, resultCopy) {
       sports_value: stationValues.sports,
       hidden_symbol: stationValues.hidden,
       melody: stationValues.arts,
+      signature_data: signatureData,
       selected_words: selectedWords,
       selected_answers: chosen.map(cleanChoiceText).filter(Boolean),
     });
@@ -1156,6 +1309,7 @@ $("skip-photo").addEventListener("click", () => {
 });
 $("use-photo").addEventListener("click", openCustomize);
 $("customize-back").addEventListener("click", returnToCamera);
+$("clear-signature").addEventListener("click", clearSignature);
 $("finish-customize").addEventListener("click", finishResult);
 document.querySelectorAll(".card-color-option").forEach((button) => {
   button.addEventListener("click", () => {

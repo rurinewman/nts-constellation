@@ -949,14 +949,16 @@
 }
 
 .card-color-picker,
-.icon-picker {
+.icon-picker,
+.signature-picker {
   margin: 0 0 30px;
   padding: 0;
   border: 0;
 }
 
 .card-color-picker legend,
-.icon-picker legend {
+.icon-picker legend,
+.signature-picker legend {
   display: flex;
   align-items: baseline;
   gap: 12px;
@@ -969,6 +971,52 @@
 .icon-picker legend span {
   color: #fff6b0;
   font-size: 13px;
+}
+
+.signature-picker legend span {
+  color: #fff6b0;
+  font-size: 13px;
+}
+
+.signature-help {
+  margin: -4px 0 12px;
+  color: #e9f8fc;
+  font-size: 14px;
+}
+
+.signature-pad-shell {
+  position: relative;
+  width: min(680px, 100%);
+  height: 150px;
+  overflow: hidden;
+  border: 2px solid rgba(233, 248, 252, .72);
+  border-radius: 16px;
+  background: #f8fcff;
+  touch-action: none;
+}
+
+.signature-pad-shell::after {
+  content: "";
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 30px;
+  border-bottom: 2px dotted #9db9c2;
+  pointer-events: none;
+}
+
+#signature-pad {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.signature-pad-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
 }
 
 .card-color-options {
@@ -1115,6 +1163,35 @@
   display: none;
 }
 
+.tin-card-signature {
+  position: absolute;
+  z-index: 3;
+  left: 45%;
+  top: 56.5%;
+  bottom: auto;
+  display: block;
+  width: 44%;
+  height: 8%;
+  pointer-events: none;
+  object-fit: contain;
+  object-position: center;
+  mix-blend-mode: multiply;
+  opacity: .9;
+  transform: rotate(-1.5deg);
+}
+
+.tin-card-stack[data-card-color="yellow"] .tin-card-signature {
+  left: 45%;
+  top: 77%;
+  bottom: auto;
+  width: 46%;
+  height: 8%;
+}
+
+.tin-card-signature[hidden] {
+  display: none;
+}
+
 .license-fields {
   position: absolute;
   z-index: 2;
@@ -1138,7 +1215,7 @@
   transform: rotate(-1.5deg);
 }
 
-#license-name { top: 38.6% - 1px; }
+#license-name { top: calc(38.6% - 1px); }
 #license-dob { top: 41.3%; }
 #license-domain { top: 44%; }
 #standalone-license-name { top: 25.6%; }

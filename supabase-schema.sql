@@ -11,8 +11,12 @@ create table if not exists public.constellation_badges (
   melody text not null,
   selected_words jsonb not null default '[]'::jsonb,
   selected_answers jsonb not null default '[]'::jsonb,
+  signature_data text not null default '',
   created_at timestamptz not null default now()
 );
+
+alter table public.constellation_badges
+add column if not exists signature_data text not null default '';
 
 alter table public.constellation_badges enable row level security;
 

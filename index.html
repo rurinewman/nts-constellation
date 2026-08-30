@@ -146,6 +146,17 @@
           <div class="icon-options" id="icon-options"></div>
         </fieldset>
 
+        <fieldset class="signature-picker">
+          <legend>Add your signature <span>Optional</span></legend>
+          <p class="signature-help">Draw your signature below to place it on your card.</p>
+          <div class="signature-pad-shell">
+            <canvas id="signature-pad" width="900" height="220" role="img" aria-label="Draw your signature here"></canvas>
+          </div>
+          <div class="signature-pad-actions">
+            <button type="button" class="camera-secondary" id="clear-signature">Clear signature</button>
+          </div>
+        </fieldset>
+
         <div class="customize-actions">
           <button type="button" class="camera-secondary" id="customize-back">← Back to portrait</button>
           <button type="button" class="primary" id="finish-customize">Reveal my tin <span>↗</span></button>
@@ -177,6 +188,7 @@
           <div class="tin-card-stack">
             <img class="tin-card" src="assets/card-pink.png" alt="Pink star-bordered constellation card" />
             <img class="tin-card-photo" id="tin-card-photo" alt="Your portrait on the constellation card" hidden />
+            <img class="tin-card-signature" id="tin-card-signature" alt="Your signature on the constellation card" hidden />
             <div class="license-fields" aria-hidden="true">
               <span id="license-name"></span>
               <span id="license-dob"></span>
