@@ -8,7 +8,9 @@ This site can save/retrieve badges without registration using a claim code. Comp
 2. Go to **SQL Editor**.
 3. Paste and run the full SQL in `supabase-schema.sql`.
 
-The SQL creates the `constellation-photos` public Storage bucket, adds the `photo_path` column, and adds the upload policy needed by the browser. Public Storage serving does not need a read policy. The bucket is public so a retrieved badge can display its portrait from a normal image URL; use an authenticated/private Storage design instead if portraits must not be publicly addressable.
+The SQL is safe to rerun: it adds the `photo_path` column, creates the `constellation-photos` public Storage bucket, and adds the upload policy needed by the browser. Public Storage serving does not need a read policy. The bucket is public so a retrieved badge can display its portrait from a normal image URL; use an authenticated/private Storage design instead if portraits must not be publicly addressable.
+
+If your project returns a permission error specifically for `storage.buckets`, create a public bucket named `constellation-photos` from **Storage → New bucket** in the Supabase dashboard, then run the rest of this SQL starting at the first `alter table` statement.
 
 ## 2. Add your project keys
 

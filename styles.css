@@ -2718,3 +2718,16 @@ select {
     margin: 0 !important;
   }
 }
+
+/* iOS date controls can keep an intrinsic width larger than their card. */
+@media (max-width: 900px) {
+  .name-intro-card input[type="date"] {
+    display: block;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}

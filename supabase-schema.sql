@@ -23,12 +23,14 @@ add column if not exists photo_path text not null default '';
 
 alter table public.constellation_badges enable row level security;
 
+drop policy if exists "Anyone can create a constellation badge" on public.constellation_badges;
 create policy "Anyone can create a constellation badge"
 on public.constellation_badges
 for insert
 to anon
 with check (true);
 
+drop policy if exists "Anyone can retrieve a badge by claim code" on public.constellation_badges;
 create policy "Anyone can retrieve a badge by claim code"
 on public.constellation_badges
 for select
