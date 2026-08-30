@@ -154,9 +154,11 @@ async function saveBadgeRecord(payload) {
   const badge = {
     claim_code: makeClaimCode(payload.participant_name, payload.constellation_name),
     participant_name: payload.participant_name,
+    participant_dob: payload.participant_dob || null,
     constellation_name: payload.constellation_name,
     constellation_title: payload.constellation_title,
     constellation_symbol: payload.constellation_symbol,
+    card_color: payload.card_color || "pink",
     result_copy: payload.result_copy,
     sports_value: payload.sports_value,
     hidden_symbol: payload.hidden_symbol,

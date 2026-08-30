@@ -65,10 +65,10 @@ const legacyQuestions = [
     note: "ARCHIVE ENTRY 05 · THE MELODY YOU CHOSE",
     primary: "🎼  YOUR INNER COMPASS",
     answers: [
-      ["It felt peaceful and familiar.", "cetus"],
-      ["It made me feel hopeful.", "phoenix"],
-      ["It felt strong and grounded.", "ursa"],
-      ["It made me curious.", "vulpecula"],
+      ["peaceful and familiar", "cetus"],
+      ["hopeful", "phoenix"],
+      ["strong and grounded", "ursa"],
+      ["curious, discovery", "vulpecula"],
     ],
     followup: "What does the feeling you chose mean to you?",
     followupNote: "ARCHIVE ENTRY 06 · WHAT THE MELODY AWAKENED",
@@ -1200,6 +1200,7 @@ function renderBadgeRecord(badge) {
   setCardSignature("");
   setResultBackVisible(false);
   const name = badge.participant_name || "Archive Keeper";
+  participantDob = badge.participant_dob || "";
   const resultCopy = badge.result_copy || "";
   const constellationKey = getConstellationKeyByName(badge.constellation_name);
   resultConstellationKey = constellationKey;
@@ -1220,11 +1221,13 @@ function renderBadgeRecord(badge) {
     : "This badge was retrieved locally.";
   setTinWords(badge.selected_words || []);
   setSignatureData(badge.signature_data || badge.signature || "");
-  selectedCardColor = getCardColorForConstellation(constellationKey);
+  selectedCardColor = CARD_COLOR_TEMPLATES[badge.card_color]
+    ? badge.card_color
+    : getCardColorForConstellation(constellationKey);
   selectedTinIcons = [];
-  setResultCardTemplate(constellationKey);
+  setResultCardTemplate(selectedCardColor);
   setCardSignature(signatureData);
-  setLicenseFields(name, "", badge.constellation_name);
+  setLicenseFields(name, participantDob, badge.constellation_name);
   setResultConstellationArt(constellationKey);
   renderTinIcons(constellationKey);
   show("result");
@@ -1236,9 +1239,11 @@ async function saveCurrentBadge(constellation, selectedWords, resultCopy) {
   try {
     const { badge, photoError } = await saveBadgeRecord({
       participant_name: participantName || "Archive Keeper",
+      participant_dob: participantDob || null,
       constellation_name: constellation[0],
       constellation_title: constellation[1],
       constellation_symbol: constellation[3],
+      card_color: selectedCardColor,
       result_copy: resultCopy,
       sports_value: stationValues.sports,
       hidden_symbol: stationValues.hidden,

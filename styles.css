@@ -2743,3 +2743,146 @@ select {
     mix-blend-mode: normal !important;
   }
 }
+
+/* Compact mobile question spreads so the prompt, artwork, and choices share a fold. */
+@media (max-width: 900px) {
+  .quiz {
+    padding:
+      max(12px, env(safe-area-inset-top))
+      clamp(8px, 2.5vw, 16px)
+      max(24px, calc(env(safe-area-inset-bottom) + 12px)) !important;
+  }
+
+  .quiz-top {
+    margin-bottom: 8px !important;
+    padding: 0 2px 8px !important;
+  }
+
+  .quiz-top .eyebrow {
+    font-size: 9px;
+  }
+
+  .progress-dots {
+    gap: 4px;
+  }
+
+  .progress-dots i {
+    width: 7px;
+    height: 7px;
+  }
+
+  .quiz .question-pane {
+    padding: clamp(18px, 4.5vw, 26px) clamp(16px, 5vw, 28px) 4px !important;
+  }
+
+  .quiz .question-pane .question-note {
+    margin-bottom: 8px;
+    font-size: clamp(9px, 2.4vw, 11px);
+    line-height: 1.3;
+  }
+
+  .quiz .question-pane h2 {
+    font-size: clamp(25px, 7.5vw, 36px) !important;
+    line-height: 1.02 !important;
+  }
+
+  .quiz .question-pane .back {
+    min-height: 38px;
+    margin-top: 4px !important;
+    padding: 7px 0;
+    font-size: 10px;
+  }
+
+  .quiz .symbol-pane {
+    min-height: 0 !important;
+    padding: 0 14px clamp(10px, 2.5vw, 18px) !important;
+  }
+
+  .quiz .question-image.visible {
+    width: min(62vw, 250px) !important;
+    max-height: clamp(120px, 22dvh, 190px) !important;
+    object-fit: contain;
+  }
+
+  .quiz .question-symbol {
+    font-size: clamp(68px, 17vw, 96px);
+  }
+
+  .quiz .answers-pane {
+    padding: clamp(14px, 3.5vw, 20px) clamp(16px, 5vw, 28px) clamp(16px, 4vw, 24px) !important;
+  }
+
+  .quiz .choose-label {
+    margin-bottom: 6px;
+    font-size: 9px;
+  }
+
+  .quiz .answers-pane .answers {
+    gap: 2px !important;
+  }
+
+  .quiz .answers-pane .answer,
+  body[data-question="8"] .quiz .answers-pane .audio-answer {
+    min-height: 44px !important;
+    grid-template-columns: 36px minmax(0, 1fr) !important;
+    gap: 6px;
+    padding: 5px 0 !important;
+  }
+
+  .quiz .answers-pane .answer-number {
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
+
+  .quiz .answers-pane .answer b {
+    font-size: clamp(14px, 3.7vw, 17px) !important;
+    line-height: 1.15 !important;
+  }
+}
+
+/* Keep the retrieved tin's lifted card from covering the result summary. */
+@media (max-width: 900px) {
+  .result-card .tin-scene {
+    margin-top: clamp(52px, 14vw, 96px) !important;
+  }
+}
+
+/* The yellow license is landscape, so its portrait and fields need their own map. */
+.tin-card-stack[data-card-color="yellow"] .tin-card-photo {
+  left: 7.2%;
+  top: 13%;
+  width: 35%;
+  height: 68.5%;
+}
+
+.tin-card-stack[data-card-color="yellow"] #license-name {
+  top: 25.6%;
+}
+
+.tin-card-stack[data-card-color="yellow"] #license-dob {
+  top: 31.8%;
+}
+
+.tin-card-stack[data-card-color="yellow"] #license-domain {
+  top: 38%;
+}
+
+.tin-card-stack[data-card-color="yellow"] .license-fields span {
+  left: 50.5%;
+  width: 43%;
+}
+
+/* Keep personalized values readable without ellipsizing them inside the card. */
+.tin-card-stack .license-fields span {
+  overflow: visible;
+  text-overflow: clip;
+  font-size: min(.48vw, 7px);
+}
+
+/* Lift the card stack clear of the hinge so it sits inside the upper lid. */
+@media (max-width: 900px) {
+  .tin-card-stack {
+    top: -17% !important;
+  }
+}

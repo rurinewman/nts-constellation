@@ -2,9 +2,11 @@ create table if not exists public.constellation_badges (
   id uuid primary key default gen_random_uuid(),
   claim_code text not null unique,
   participant_name text not null,
+  participant_dob date,
   constellation_name text not null,
   constellation_title text not null,
   constellation_symbol text not null,
+  card_color text not null default 'pink',
   result_copy text not null,
   sports_value text not null,
   hidden_symbol text not null,
@@ -17,6 +19,12 @@ create table if not exists public.constellation_badges (
 
 alter table public.constellation_badges
 add column if not exists signature_data text not null default '';
+
+alter table public.constellation_badges
+add column if not exists participant_dob date;
+
+alter table public.constellation_badges
+add column if not exists card_color text not null default 'pink';
 
 alter table public.constellation_badges
 add column if not exists photo_path text not null default '';
