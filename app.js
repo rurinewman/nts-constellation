@@ -126,10 +126,10 @@ const legacyQuestions = [
     note: "ARCHIVE ENTRY 09 · THE STAR YOU HAVE YET TO FIND",
     primary: "Your sky is never complete.",
     answers: [
-      ["✨  Wonder", "vulpecula"],
-      ["🔥  Courage", "draco"],
-      ["🌿  Connection", "delphinus"],
-      ["🌱  Growth", "phoenix"],
+      ["Wonder", "vulpecula"],
+      ["Courage", "draco"],
+      ["Connection", "delphinus"],
+      ["Growth", "phoenix"],
     ],
     followup: "Why would you choose this star?",
     followupNote: "There is always room for another star.",
@@ -253,7 +253,7 @@ const questionImages = [
     "A teddy bear reading on a yellow moon chair",
   ],
   [
-    "assets/tia-tail-water.jpg",
+    "assets/tia-tail-water.png",
     "A striped tail dipping into blue illustrated water",
   ],
   [
