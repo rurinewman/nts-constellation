@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=tin-camera" />
+  <link rel="stylesheet" href="styles.css?v=card-first" />
   <link rel="stylesheet" href="questions/question-01.css" />
   <link rel="stylesheet" href="questions/question-02.css" />
   <link rel="stylesheet" href="questions/question-03.css" />
@@ -22,6 +22,7 @@
   <div class="stars" aria-hidden="true"><svg viewBox="0 0 1440 900" preserveAspectRatio="none"><g class="constellation constellation-a"><path d="M80 170 L190 110 L300 180 L410 105 L520 150"/><circle cx="80" cy="170" r="4"/><circle cx="190" cy="110" r="4"/><circle cx="300" cy="180" r="4"/><circle cx="410" cy="105" r="4"/><circle cx="520" cy="150" r="4"/></g><g class="constellation constellation-b"><path d="M1010 620 L1090 520 L1200 570 L1270 450 L1370 500"/><circle cx="1010" cy="620" r="4"/><circle cx="1090" cy="520" r="4"/><circle cx="1200" cy="570" r="4"/><circle cx="1270" cy="450" r="4"/><circle cx="1370" cy="500" r="4"/></g><g class="constellation constellation-c"><path d="M780 190 L850 270 L930 230 L980 320"/><circle cx="780" cy="190" r="3"/><circle cx="850" cy="270" r="3"/><circle cx="930" cy="230" r="3"/><circle cx="980" cy="320" r="3"/></g></svg></div>
   <main id="top">
     <section class="screen active intro" id="intro">
+      <a class="scholars-nav" href="scholars.html">NTU Talent Scholars</a>
       <div class="eyebrow">AN IDENTITY JOURNEY IN THREE PILLARS</div>
       <h1>What<br><em>constellation</em><br>are you?</h1>
       <p class="lead">Your identity is not a fixed star. It is a map, shaped by the values you hold, the choices you make, and the paths you choose.</p>
@@ -61,6 +62,8 @@
         <p>Every constellation has a keeper. Add your name to begin your personal archive.</p>
         <label for="participant-name">Your name</label>
         <input id="participant-name" type="text" autocomplete="name" placeholder="Write your name" maxlength="40" />
+        <label for="participant-dob">Your date of birth</label>
+        <input id="participant-dob" type="date" autocomplete="bday" />
         <button type="button" class="primary" id="continue-name">Continue <span>↗</span></button>
       </div>
     </section>
@@ -132,12 +135,14 @@
           <div class="tin-card-stack">
             <img class="tin-card" src="assets/card-pink.png" alt="Pink star-bordered constellation card" />
             <img class="tin-card-photo" id="tin-card-photo" alt="Your portrait on the constellation card" hidden />
+            <div class="license-fields" aria-hidden="true">
+              <span id="license-name"></span>
+              <span id="license-dob"></span>
+              <span id="license-domain"></span>
+            </div>
           </div>
-          <div class="tin-items" aria-hidden="true">
-            <span class="tin-prop tin-prop-camera"></span>
-            <span class="tin-prop tin-prop-glasses"></span>
-            <span class="tin-prop tin-prop-heart">♥</span>
-            <span class="tin-prop tin-prop-skirt"></span>
+          <div class="tin-items" aria-label="Your chosen keepsake icons and answer words">
+            <div class="tin-icons" id="tin-icons"></div>
             <div class="tin-item-copy">
               <span id="tin-item-copy-one">cute camera polaroid</span>
               <span id="tin-item-copy-two">little pink glassess</span>
@@ -181,6 +186,6 @@
   <script src="questions/question-07.js?v=audio-final"></script>
   <script src="questions/question-08.js?v=audio-final"></script>
   <script src="questions/question-09.js?v=no-melody-input"></script>
-  <script src="app.js?v=camera-capture"></script>
+  <script src="app.js?v=card-first"></script>
 </body>
 </html>

@@ -277,8 +277,42 @@ let current = 0,
 const $ = (id) => document.getElementById(id);
 let participantName = "";
 const CARD_PHOTO_RATIO = 537 / 702;
+const CARD_TEMPLATES = {
+  ursa: "assets/card-blue.png",
+  cetus: "assets/card-blue.png",
+  lynx: "assets/card-blue.png",
+  phoenix: "assets/card-yellow.png",
+  draco: "assets/card-yellow.png",
+  pegasus: "assets/card-pink.png",
+  delphinus: "assets/card-pink.png",
+  aquila: "assets/card-green.png",
+  vulpecula: "assets/card-green.png",
+  corvus: "assets/card-green.png",
+};
+const TIN_ICON_LAYOUT = [
+  { x: "24%", y: "67%", size: "13%", rot: "-8deg" },
+  { x: "43%", y: "73%", size: "18%", rot: "3deg" },
+  { x: "63%", y: "65%", size: "13%", rot: "8deg" },
+  { x: "76%", y: "81%", size: "15%", rot: "-7deg" },
+  { x: "33%", y: "86%", size: "11%", rot: "6deg" },
+  { x: "55%", y: "88%", size: "12%", rot: "-4deg" },
+];
+const CONSTELLATION_ICON_SETS = {
+  ursa: ["⚓", "🧸", "🗻", "🕯️", "🧭", "🌲"],
+  pegasus: ["🪽", "☁️", "🎨", "🪁", "📸", "✨"],
+  delphinus: ["🐚", "💌", "🌊", "🤝", "🫧", "🌷"],
+  corvus: ["📓", "🔍", "🕰️", "🪶", "☕", "🌙"],
+  draco: ["🔥", "🛡️", "🔑", "⚡", "🗡️", "🏮"],
+  aquila: ["🏔️", "🦅", "🏅", "🚀", "📍", "☀️"],
+  vulpecula: ["🧭", "🗺️", "🔭", "🍄", "🌿", "🌌"],
+  lynx: ["🐈", "🪞", "💎", "🌕", "🪻", "🧿"],
+  cetus: ["🐋", "🌊", "🐚", "🫧", "🛶", "💙"],
+  phoenix: ["🔥", "🌅", "🌱", "🦋", "☀️", "💫"],
+};
 let cameraStream = null;
 let capturedPhoto = "";
+let resultConstellationKey = "pegasus";
+let participantDob = "";
 let pendingResult = null;
 let lastResult = null;
 let resultSaved = false;
@@ -456,6 +490,36 @@ function setCardPhoto(dataUrl) {
   image.classList.toggle("visible", Boolean(dataUrl));
 }
 
+function setResultCardTemplate(key) {
+  const template = CARD_TEMPLATES[key] || "assets/card-pink.png";
+  const card = document.querySelector(".tin-card");
+  if (!card) return;
+  card.src = template;
+  card.alt = "Star-bordered constellation license card";
+}
+
+function getConstellationKeyByName(name) {
+  return Object.entries(constellations).find(([, constellation]) => constellation[0] === name)?.[0] || "pegasus";
+}
+
+function formatDob(value) {
+  if (!value) return "";
+  const [year, month, day] = value.split("-");
+  if (!year || !month || !day) return value;
+  return `${day}/${month}/${year}`;
+}
+
+function setLicenseFields(name, dob, domain) {
+  [
+    ["license-name", name || "Archive Keeper"],
+    ["license-dob", formatDob(dob)],
+    ["license-domain", domain || "The Archive"],
+  ].forEach(([id, value]) => {
+    const field = $(id);
+    if (field) field.textContent = value;
+  });
+}
+
 function setResultBackVisible(visible) {
   const button = $("result-back");
   if (button) button.hidden = !visible;
@@ -572,6 +636,24 @@ function handlePhotoUpload(event) {
   image.src = objectUrl;
 }
 
+function renderTinIcons(key = resultConstellationKey) {
+  const holder = $("tin-icons");
+  if (!holder) return;
+  const icons = CONSTELLATION_ICON_SETS[key] || CONSTELLATION_ICON_SETS.pegasus;
+  holder.innerHTML = "";
+  icons.forEach((icon, index) => {
+    const layout = TIN_ICON_LAYOUT[index];
+    const item = document.createElement("span");
+    item.className = "tin-icon";
+    item.textContent = icon;
+    item.style.setProperty("--tin-icon-x", layout.x);
+    item.style.setProperty("--tin-icon-y", layout.y);
+    item.style.setProperty("--tin-icon-size", layout.size);
+    item.style.setProperty("--tin-icon-rotation", layout.rot);
+    holder.appendChild(item);
+  });
+}
+
 function applyResult(constellation, selectedWords, resultCopy) {
   $("result-kicker").textContent = participantName
     ? `${participantName}, your guiding constellation is`
@@ -586,6 +668,8 @@ function applyResult(constellation, selectedWords, resultCopy) {
   $("map-compass").textContent = stationValues.arts;
   $("map-entry").textContent = stationValues.hidden;
   setTinWords(selectedWords);
+  setLicenseFields(participantName, participantDob, constellation[0]);
+  renderTinIcons(resultConstellationKey);
   setCardPhoto(capturedPhoto);
   setResultBackVisible(true);
 }
@@ -606,7 +690,9 @@ function finishResult() {
 function reveal() {
   const key =
     Object.keys(scores).sort((a, b) => scores[b] - scores[a])[0] || "pegasus";
-  const c = constellations[key] || constellations.pegasus;
+const c = constellations[key] || constellations.pegasus;
+  resultConstellationKey = key;
+  setResultCardTemplate(key);
   const resultCopy = `Like ${c[0]}, you are guided by ${c[2].toLowerCase()} Your constellation is a reflection of the values shaping your journey today.`;
   const selectedWords = makeTinWords(c);
   lastResult = { constellation: c, selectedWords, resultCopy };
@@ -637,6 +723,7 @@ function returnToFinalQuestion() {
   resultSaved = false;
   setCapturedPhoto("");
   setCardPhoto("");
+  renderTinIcons(resultConstellationKey);
   setResultBackVisible(false);
   render();
   show("quiz");
@@ -662,11 +749,14 @@ function startArchive() {
   scores = {};
   chosen = [];
   participantName = "";
+  participantDob = "";
+  resultConstellationKey = "pegasus";
   pendingResult = null;
   lastResult = null;
   resultSaved = false;
   setCapturedPhoto("");
   setCardPhoto("");
+  renderTinIcons(resultConstellationKey);
   setResultBackVisible(false);
   stationValues = {
     sports: "Perseverance",
@@ -681,20 +771,25 @@ function goHome() {
   scores = {};
   chosen = [];
   participantName = "";
+  participantDob = "";
+  resultConstellationKey = "pegasus";
   pendingResult = null;
   lastResult = null;
   resultSaved = false;
   setCapturedPhoto("");
   setCardPhoto("");
+  renderTinIcons(resultConstellationKey);
   setResultBackVisible(false);
   show("intro");
 }
 function beginQuestions() {
   $("participant-name").value = "";
+  $("participant-dob").value = "";
   show("name-intro");
 }
 function continueName() {
   participantName = titleCaseName($("participant-name").value.trim()) || "Archive keeper";
+  participantDob = $("participant-dob").value;
   $("station-name").textContent = participantName;
   $("sports-value").value = "";
   $("hidden-symbol").value = "";
@@ -728,6 +823,10 @@ function setTinWords(words) {
     const label = $(`tin-word-${["one", "two", "three", "four", "five"][index]}`);
     if (label) label.textContent = words[index] || word;
   });
+  ["one", "two", "three"].forEach((slot, index) => {
+    const label = $(`tin-item-copy-${slot}`);
+    if (label) label.textContent = words[index + 2] || words[index] || fallbackWords[index];
+  });
 }
 function renderBadgeRecord(badge) {
   pendingResult = null;
@@ -738,6 +837,8 @@ function renderBadgeRecord(badge) {
   setResultBackVisible(false);
   const name = badge.participant_name || "Archive Keeper";
   const resultCopy = badge.result_copy || "";
+  const constellationKey = getConstellationKeyByName(badge.constellation_name);
+  resultConstellationKey = constellationKey;
   $("result-kicker").textContent = `${name}, your guiding constellation is`;
   $("result-symbol").textContent = badge.constellation_symbol || "✦";
   $("result-name").textContent = badge.constellation_name || "Your Constellation";
@@ -753,6 +854,9 @@ function renderBadgeRecord(badge) {
     ? "Save this code to retrieve your constellation badge later."
     : "This badge was retrieved locally.";
   setTinWords(badge.selected_words || []);
+  setResultCardTemplate(constellationKey);
+  setLicenseFields(name, "", badge.constellation_name);
+  renderTinIcons(constellationKey);
   show("result");
 }
 async function saveCurrentBadge(constellation, selectedWords, resultCopy) {
