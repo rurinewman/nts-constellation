@@ -1,5 +1,6 @@
 const ARCHIVE_TABLE = "constellation_badges";
 const LOCAL_BADGE_KEY = "constellation_badges";
+const LOCAL_DRAFT_KEY = "constellation_quiz_draft";
 
 function getArchiveConfig() {
   return window.archiveConfig || {};
@@ -39,6 +40,28 @@ function saveLocalBadge(badge) {
 function findLocalBadge(claimCode) {
   const badges = getLocalBadges();
   return badges[claimCode] || null;
+}
+
+function saveQuizDraft(draft) {
+  localStorage.setItem(
+    LOCAL_DRAFT_KEY,
+    JSON.stringify({
+      ...draft,
+      updated_at: new Date().toISOString(),
+    }),
+  );
+}
+
+function loadQuizDraft() {
+  try {
+    return JSON.parse(localStorage.getItem(LOCAL_DRAFT_KEY)) || null;
+  } catch {
+    return null;
+  }
+}
+
+function clearQuizDraft() {
+  localStorage.removeItem(LOCAL_DRAFT_KEY);
 }
 
 async function supabaseRequest(path, options = {}) {

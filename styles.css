@@ -898,6 +898,167 @@
   line-height: 1.4;
 }
 
+/* Card customization screen */
+.customize-screen {
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  padding: 5vh 6vw;
+}
+
+.customize-card {
+  width: min(980px, 100%);
+  padding: clamp(30px, 5vw, 58px);
+  border-radius: 30px;
+  color: #f8fcff;
+  background: #4b91b3;
+  box-shadow: 0 24px 60px #4d8eaa88;
+}
+
+.customize-card .eyebrow {
+  color: #dff4f8;
+}
+
+.customize-card h2 {
+  margin: 22px 0 14px;
+  color: #f8fcff;
+  font-size: clamp(44px, 7vw, 86px);
+  line-height: .92;
+  letter-spacing: -.075em;
+}
+
+.customize-card h2 em {
+  color: #fff6b0;
+  font-style: normal;
+}
+
+.customize-lead {
+  width: min(680px, 100%);
+  margin: 0 0 30px;
+  color: #e9f8fc;
+  font-size: clamp(16px, 1.8vw, 22px);
+  line-height: 1.6;
+}
+
+.card-color-picker,
+.icon-picker {
+  margin: 0 0 30px;
+  padding: 0;
+  border: 0;
+}
+
+.card-color-picker legend,
+.icon-picker legend {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 14px;
+  color: #f8fcff;
+  font-weight: 900;
+  font-size: 18px;
+}
+
+.icon-picker legend span {
+  color: #fff6b0;
+  font-size: 13px;
+}
+
+.card-color-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.card-color-option {
+  border: 2px solid transparent;
+  border-radius: 20px;
+  padding: 12px;
+  color: #315f80;
+  background: rgba(248, 252, 255, .88);
+  cursor: pointer;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.card-color-option img {
+  display: block;
+  width: 250%;
+  max-width: none;
+  aspect-ratio: 1.55 / 1;
+  object-fit: contain;
+  margin: -40% -40% -30% -75%;
+  padding: 10px 10px 10px 10px;
+  filter: drop-shadow(0 10px 12px rgba(38, 83, 110, .2));
+}
+
+.card-color-option span {
+  font-weight: 900;
+}
+
+.card-color-option:hover,
+.card-color-option.selected {
+  transform: translateY(-3px);
+  border-color: #fff6b0;
+  box-shadow: 0 12px 0 rgba(49, 95, 128, .22);
+}
+
+.icon-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.icon-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  border: 2px solid rgba(233, 248, 252, .58);
+  border-radius: 20px;
+  background: rgba(248, 252, 255, .16);
+  font-size: 28px;
+  cursor: pointer;
+  transition: transform .18s ease, background .18s ease, border-color .18s ease;
+}
+
+.icon-option:hover,
+.icon-option[aria-pressed="true"] {
+  transform: translateY(-3px) rotate(-2deg);
+  border-color: #fff6b0;
+  background: rgba(255, 246, 176, .32);
+}
+
+.customize-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.customize-actions .primary {
+  margin-top: 0;
+}
+
+.result-constellation-art {
+  display: block;
+  width: clamp(90px, 15vw, 170px);
+  height: auto;
+  margin: 14px auto 8px;
+  filter: drop-shadow(0 18px 18px rgba(93, 58, 72, .18));
+}
+
+.result-attributes {
+  max-width: 560px;
+  margin: 8px auto 22px;
+  color: #7a5a53;
+  font-size: clamp(16px, 1.8vw, 22px);
+  font-weight: 800;
+  line-height: 1.45;
+  text-align: center;
+}
+
 /* Keep the portrait inside the photograph box on card-pink.png. */
 .tin-card-stack {
   position: absolute;
@@ -959,11 +1120,11 @@
 }
 
 #license-name,
-#standalone-license-name { top: 31.5%; }
+#standalone-license-name { top: 25.6%; }
 #license-dob,
-#standalone-license-dob { top: 37.6%; }
+#standalone-license-dob { top: 31.8%; }
 #license-domain,
-#standalone-license-domain { top: 43.8%; }
+#standalone-license-domain { top: 38%; }
 
 .tin-card-stack .license-fields {
   font-size: min(.56vw, 8px);

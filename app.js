@@ -277,18 +277,50 @@ let current = 0,
 const $ = (id) => document.getElementById(id);
 let participantName = "";
 const CARD_PHOTO_RATIO = 537 / 702;
-const CARD_TEMPLATES = {
-  ursa: "assets/card-blue.png",
-  cetus: "assets/card-blue.png",
-  lynx: "assets/card-blue.png",
-  phoenix: "assets/card-yellow.png",
-  draco: "assets/card-yellow.png",
-  pegasus: "assets/card-pink.png",
-  delphinus: "assets/card-pink.png",
-  aquila: "assets/card-green.png",
-  vulpecula: "assets/card-green.png",
-  corvus: "assets/card-green.png",
+const CARD_COLOR_TEMPLATES = {
+  blue: "assets/card-blue.png",
+  green: "assets/card-green.png",
+  pink: "assets/card-pink.png",
+  yellow: "assets/card-yellow.png",
 };
+const DEFAULT_CARD_COLORS = {
+  ursa: "blue",
+  cetus: "blue",
+  lynx: "blue",
+  phoenix: "yellow",
+  draco: "yellow",
+  pegasus: "pink",
+  delphinus: "pink",
+  aquila: "green",
+  vulpecula: "green",
+  corvus: "green",
+};
+const CONSTELLATION_ART = {
+  cetus: "assets/constellation-cetus.png",
+  corvus: "assets/constellation-corvus.png",
+  delphinus: "assets/constellation-delphinus.png",
+  draco: "assets/constellation-draco.png",
+  lynx: "assets/constellation-lynx.png",
+  pegasus: "assets/constellation-pegasus.png",
+  phoenix: "assets/constellation-phoenix.png",
+  vulpecula: "assets/constellation-vulpecula.png",
+  hydra: "assets/constellation-hydra.png",
+  lupus: "assets/constellation-lupus.png",
+};
+const CUSTOM_TIN_ICON_OPTIONS = [
+  "🔥",
+  "🌅",
+  "🌱",
+  "🦋",
+  "☀️",
+  "💫",
+  "🐚",
+  "🌊",
+  "📓",
+  "🧭",
+  "🎨",
+  "✨",
+];
 const TIN_ICON_LAYOUT = [
   { x: "24%", y: "67%", size: "13%", rot: "-8deg" },
   { x: "43%", y: "73%", size: "18%", rot: "3deg" },
@@ -316,6 +348,9 @@ let participantDob = "";
 let pendingResult = null;
 let lastResult = null;
 let resultSaved = false;
+let selectedCardColor = "pink";
+let selectedTinIcons = [];
+let restoringDraft = false;
 
 function stopAllAudio() {
   document.querySelectorAll("audio").forEach((audio) => {
@@ -346,7 +381,7 @@ function show(id) {
   const screen = $(id);
   if (!screen) return;
   screen.classList.add("active");
-  screen.style.display = ["archive-intro", "name-intro", "station-intro", "camera"].includes(id)
+  screen.style.display = ["archive-intro", "name-intro", "station-intro", "camera", "customize"].includes(id)
     ? "flex"
     : "block";
   window.scrollTo(0, 0);
@@ -425,6 +460,7 @@ function render() {
         select(+button.dataset.index);
       };
     });
+  saveCurrentDraft("quiz");
 }
 function turnPage(direction) {
   stopAllAudio();
@@ -490,12 +526,19 @@ function setCardPhoto(dataUrl) {
   image.classList.toggle("visible", Boolean(dataUrl));
 }
 
-function setResultCardTemplate(key) {
-  const template = CARD_TEMPLATES[key] || "assets/card-pink.png";
+function getCardColorForConstellation(key) {
+  return DEFAULT_CARD_COLORS[key] || "pink";
+}
+
+function setResultCardTemplate(selection = selectedCardColor) {
+  const color = CARD_COLOR_TEMPLATES[selection]
+    ? selection
+    : getCardColorForConstellation(selection);
+  const template = CARD_COLOR_TEMPLATES[color] || CARD_COLOR_TEMPLATES.pink;
   const card = document.querySelector(".tin-card");
   if (!card) return;
   card.src = template;
-  card.alt = "Star-bordered constellation license card";
+  card.alt = `${color} star-bordered constellation license card`;
 }
 
 function getConstellationKeyByName(name) {
@@ -639,9 +682,11 @@ function handlePhotoUpload(event) {
 function renderTinIcons(key = resultConstellationKey) {
   const holder = $("tin-icons");
   if (!holder) return;
-  const icons = CONSTELLATION_ICON_SETS[key] || CONSTELLATION_ICON_SETS.pegasus;
+  const icons = selectedTinIcons.length
+    ? selectedTinIcons
+    : CONSTELLATION_ICON_SETS[key] || CONSTELLATION_ICON_SETS.pegasus;
   holder.innerHTML = "";
-  icons.forEach((icon, index) => {
+  icons.slice(0, TIN_ICON_LAYOUT.length).forEach((icon, index) => {
     const layout = TIN_ICON_LAYOUT[index];
     const item = document.createElement("span");
     item.className = "tin-icon";
@@ -654,6 +699,150 @@ function renderTinIcons(key = resultConstellationKey) {
   });
 }
 
+function setResultConstellationArt(key) {
+  const image = $("result-constellation-art");
+  if (!image) return;
+  const src = CONSTELLATION_ART[key];
+  if (!src) {
+    image.hidden = true;
+    image.removeAttribute("src");
+    return;
+  }
+  image.src = src;
+  image.alt = `${constellations[key]?.[0] || "Constellation"} illustration`;
+  image.hidden = false;
+  image.onerror = () => {
+    image.hidden = true;
+    image.removeAttribute("src");
+  };
+}
+
+function renderCardColorOptions() {
+  document.querySelectorAll(".card-color-option").forEach((button) => {
+    const isSelected = button.dataset.cardColor === selectedCardColor;
+    button.classList.toggle("selected", isSelected);
+    button.setAttribute("aria-pressed", String(isSelected));
+  });
+}
+
+function renderIconOptions() {
+  const holder = $("icon-options");
+  if (!holder) return;
+  holder.innerHTML = "";
+  CUSTOM_TIN_ICON_OPTIONS.forEach((icon) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "icon-option";
+    button.textContent = icon;
+    button.dataset.icon = icon;
+    button.setAttribute("aria-pressed", String(selectedTinIcons.includes(icon)));
+    button.addEventListener("click", () => toggleTinIcon(icon));
+    holder.appendChild(button);
+  });
+}
+
+function toggleTinIcon(icon) {
+  if (selectedTinIcons.includes(icon)) {
+    selectedTinIcons = selectedTinIcons.filter((selectedIcon) => selectedIcon !== icon);
+  } else if (selectedTinIcons.length < TIN_ICON_LAYOUT.length) {
+    selectedTinIcons = [...selectedTinIcons, icon];
+  }
+  renderIconOptions();
+  saveCurrentDraft("customize");
+}
+
+function openCustomize() {
+  if (!pendingResult) return;
+  selectedCardColor = selectedCardColor || getCardColorForConstellation(resultConstellationKey);
+  if (!selectedTinIcons.length) {
+    selectedTinIcons = [...(CONSTELLATION_ICON_SETS[resultConstellationKey] || CONSTELLATION_ICON_SETS.pegasus)];
+  }
+  renderCardColorOptions();
+  renderIconOptions();
+  show("customize");
+  saveCurrentDraft("customize");
+}
+
+function getDraftPayload(screen = "quiz") {
+  return {
+    screen,
+    current,
+    phase,
+    scores,
+    chosen,
+    stationValues,
+    participantName,
+    participantDob,
+    resultConstellationKey,
+    selectedCardColor,
+    selectedTinIcons,
+    pendingResult,
+    lastResult,
+  };
+}
+
+function saveCurrentDraft(screen = "quiz") {
+  if (restoringDraft || resultSaved || !participantName) return;
+  saveQuizDraft(getDraftPayload(screen));
+}
+
+function resetDraftState() {
+  current = 0;
+  phase = 0;
+  scores = {};
+  chosen = [];
+  participantName = "";
+  participantDob = "";
+  resultConstellationKey = "pegasus";
+  selectedCardColor = "pink";
+  selectedTinIcons = [];
+  pendingResult = null;
+  lastResult = null;
+  resultSaved = false;
+}
+
+function restoreDraftState(draft) {
+  restoringDraft = true;
+  current = Number.isInteger(draft.current) ? draft.current : 0;
+  phase = Number.isInteger(draft.phase) ? draft.phase : 0;
+  scores = draft.scores || {};
+  chosen = Array.isArray(draft.chosen) ? draft.chosen : [];
+  stationValues = draft.stationValues || stationValues;
+  participantName = draft.participantName || "";
+  participantDob = draft.participantDob || "";
+  resultConstellationKey = draft.resultConstellationKey || "pegasus";
+  selectedCardColor = draft.selectedCardColor || getCardColorForConstellation(resultConstellationKey);
+  selectedTinIcons = Array.isArray(draft.selectedTinIcons) ? draft.selectedTinIcons : [];
+  pendingResult = draft.pendingResult || null;
+  lastResult = draft.lastResult || null;
+  $("participant-name").value = participantName;
+  $("participant-dob").value = participantDob;
+  $("station-name").textContent = participantName || "you";
+  $("sports-value").value = stationValues.sports || "";
+  $("hidden-symbol").value = stationValues.hidden || "";
+
+  if (draft.screen === "customize" && pendingResult) {
+    renderCardColorOptions();
+    renderIconOptions();
+    show("customize");
+  } else if (draft.screen === "station-intro") {
+    show("station-intro");
+  } else if (draft.screen === "name-intro") {
+    show("name-intro");
+  } else {
+    render();
+    show("quiz");
+  }
+  restoringDraft = false;
+}
+
+function restoreDraftIfAvailable() {
+  const draft = loadQuizDraft();
+  if (!draft || !draft.participantName) return false;
+  restoreDraftState(draft);
+  return true;
+}
+
 function applyResult(constellation, selectedWords, resultCopy) {
   $("result-kicker").textContent = participantName
     ? `${participantName}, your guiding constellation is`
@@ -661,6 +850,7 @@ function applyResult(constellation, selectedWords, resultCopy) {
   $("result-symbol").textContent = constellation[3];
   $("result-name").textContent = constellation[0];
   $("result-title").textContent = constellation[1];
+  $("result-attributes").textContent = constellation[2];
   $("result-copy").textContent = resultCopy;
   $("tin-person-name").textContent = participantName || "Archive Keeper";
   $("tin-constellation-label").textContent = `${constellation[0]} · ${constellation[1]}`;
@@ -669,6 +859,8 @@ function applyResult(constellation, selectedWords, resultCopy) {
   $("map-entry").textContent = stationValues.hidden;
   setTinWords(selectedWords);
   setLicenseFields(participantName, participantDob, constellation[0]);
+  setResultConstellationArt(resultConstellationKey);
+  setResultCardTemplate(selectedCardColor);
   renderTinIcons(resultConstellationKey);
   setCardPhoto(capturedPhoto);
   setResultBackVisible(true);
@@ -683,6 +875,7 @@ function finishResult() {
   show("result");
   if (shouldSave) {
     resultSaved = true;
+    clearQuizDraft();
     saveCurrentBadge(constellation, selectedWords, resultCopy);
   }
 }
@@ -692,7 +885,9 @@ function reveal() {
     Object.keys(scores).sort((a, b) => scores[b] - scores[a])[0] || "pegasus";
 const c = constellations[key] || constellations.pegasus;
   resultConstellationKey = key;
-  setResultCardTemplate(key);
+  selectedCardColor = getCardColorForConstellation(key);
+  selectedTinIcons = [];
+  setResultCardTemplate(selectedCardColor);
   const resultCopy = `Like ${c[0]}, you are guided by ${c[2].toLowerCase()} Your constellation is a reflection of the values shaping your journey today.`;
   const selectedWords = makeTinWords(c);
   lastResult = { constellation: c, selectedWords, resultCopy };
@@ -701,6 +896,7 @@ const c = constellations[key] || constellations.pegasus;
   setCapturedPhoto("");
   $("camera-error").textContent = "";
   show("camera");
+  saveCurrentDraft("camera");
   startCamera();
 }
 
@@ -727,6 +923,7 @@ function returnToFinalQuestion() {
   setResultBackVisible(false);
   render();
   show("quiz");
+  saveCurrentDraft("quiz");
 }
 
 function returnToCamera() {
@@ -744,16 +941,8 @@ function returnToCamera() {
 }
 
 function startArchive() {
-  current = 0;
-  phase = 0;
-  scores = {};
-  chosen = [];
-  participantName = "";
-  participantDob = "";
-  resultConstellationKey = "pegasus";
-  pendingResult = null;
-  lastResult = null;
-  resultSaved = false;
+  resetDraftState();
+  clearQuizDraft();
   setCapturedPhoto("");
   setCardPhoto("");
   renderTinIcons(resultConstellationKey);
@@ -766,16 +955,7 @@ function startArchive() {
   show("archive-intro");
 }
 function goHome() {
-  current = 0;
-  phase = 0;
-  scores = {};
-  chosen = [];
-  participantName = "";
-  participantDob = "";
-  resultConstellationKey = "pegasus";
-  pendingResult = null;
-  lastResult = null;
-  resultSaved = false;
+  resetDraftState();
   setCapturedPhoto("");
   setCardPhoto("");
   renderTinIcons(resultConstellationKey);
@@ -786,6 +966,7 @@ function beginQuestions() {
   $("participant-name").value = "";
   $("participant-dob").value = "";
   show("name-intro");
+  saveCurrentDraft("name-intro");
 }
 function continueName() {
   participantName = titleCaseName($("participant-name").value.trim()) || "Archive keeper";
@@ -794,6 +975,7 @@ function continueName() {
   $("sports-value").value = "";
   $("hidden-symbol").value = "";
   show("station-intro");
+  saveCurrentDraft("station-intro");
 }
 function titleCaseName(value) {
   return value.replace(/\S+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
@@ -843,6 +1025,7 @@ function renderBadgeRecord(badge) {
   $("result-symbol").textContent = badge.constellation_symbol || "✦";
   $("result-name").textContent = badge.constellation_name || "Your Constellation";
   $("result-title").textContent = badge.constellation_title || "The Archive";
+  $("result-attributes").textContent = constellations[constellationKey]?.[2] || "";
   $("result-copy").textContent = resultCopy;
   $("tin-person-name").textContent = name;
   $("tin-constellation-label").textContent = `${badge.constellation_name} · ${badge.constellation_title}`;
@@ -854,8 +1037,11 @@ function renderBadgeRecord(badge) {
     ? "Save this code to retrieve your constellation badge later."
     : "This badge was retrieved locally.";
   setTinWords(badge.selected_words || []);
+  selectedCardColor = getCardColorForConstellation(constellationKey);
+  selectedTinIcons = [];
   setResultCardTemplate(constellationKey);
   setLicenseFields(name, "", badge.constellation_name);
+  setResultConstellationArt(constellationKey);
   renderTinIcons(constellationKey);
   show("result");
 }
@@ -916,6 +1102,7 @@ function startQuiz() {
   chosen = [stationValues.sports, stationValues.hidden];
   render();
   show("quiz");
+  saveCurrentDraft("quiz");
 }
 $("begin").addEventListener("click", startArchive);
 $("enter-archive").addEventListener("click", beginQuestions);
@@ -933,9 +1120,18 @@ $("camera-upload").addEventListener("change", handlePhotoUpload);
 $("camera-back").addEventListener("click", returnToFinalQuestion);
 $("skip-photo").addEventListener("click", () => {
   setCapturedPhoto("");
-  finishResult();
+  openCustomize();
 });
-$("use-photo").addEventListener("click", finishResult);
+$("use-photo").addEventListener("click", openCustomize);
+$("customize-back").addEventListener("click", returnToCamera);
+$("finish-customize").addEventListener("click", finishResult);
+document.querySelectorAll(".card-color-option").forEach((button) => {
+  button.addEventListener("click", () => {
+    selectedCardColor = button.dataset.cardColor || "pink";
+    renderCardColorOptions();
+    saveCurrentDraft("customize");
+  });
+});
 $("back").addEventListener("click", () => {
   if (phase === 1) {
     phase = 0;
@@ -955,3 +1151,5 @@ $("copy-claim-code").addEventListener("click", async () => {
   await navigator.clipboard.writeText(code);
   $("save-status").textContent = "Claim code copied.";
 });
+
+restoreDraftIfAvailable();

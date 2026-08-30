@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=card-first" />
+  <link rel="stylesheet" href="styles.css?v=customize-result-art" />
   <link rel="stylesheet" href="questions/question-01.css" />
   <link rel="stylesheet" href="questions/question-02.css" />
   <link rel="stylesheet" href="questions/question-03.css" />
@@ -113,6 +113,46 @@
       </div>
     </section>
 
+    <section class="screen customize-screen" id="customize">
+      <div class="customize-card">
+        <div class="eyebrow">THE ARCHIVE · FINAL TOUCHES</div>
+        <h2>Choose your<br><em>keepsake style.</em></h2>
+        <p class="customize-lead">Pick the card colour that feels most like your constellation, then choose the little icons you want to carry in your tin.</p>
+
+        <fieldset class="card-color-picker">
+          <legend>Choose your card colour</legend>
+          <div class="card-color-options" id="card-color-options">
+            <button type="button" class="card-color-option" data-card-color="blue" aria-pressed="false">
+              <img src="assets/card-blue.png" alt="Blue license card preview" />
+              <span>Blue</span>
+            </button>
+            <button type="button" class="card-color-option" data-card-color="green" aria-pressed="false">
+              <img src="assets/card-green.png" alt="Green license card preview" />
+              <span>Green</span>
+            </button>
+            <button type="button" class="card-color-option" data-card-color="pink" aria-pressed="false">
+              <img src="assets/card-pink.png" alt="Pink license card preview" />
+              <span>Pink</span>
+            </button>
+            <button type="button" class="card-color-option" data-card-color="yellow" aria-pressed="false">
+              <img src="assets/card-yellow.png" alt="Yellow license card preview" />
+              <span>Yellow</span>
+            </button>
+          </div>
+        </fieldset>
+
+        <fieldset class="icon-picker">
+          <legend>Choose your tin icons <span>Pick up to 6</span></legend>
+          <div class="icon-options" id="icon-options"></div>
+        </fieldset>
+
+        <div class="customize-actions">
+          <button type="button" class="camera-secondary" id="customize-back">← Back to portrait</button>
+          <button type="button" class="primary" id="finish-customize">Reveal my tin <span>↗</span></button>
+        </div>
+      </div>
+    </section>
+
     <section class="screen quiz" id="quiz">
       <div class="quiz-top"><div class="eyebrow">THE ARCHIVE · ENTRY <span id="entry-number">01</span></div><div class="progress-dots" id="progress-dots"></div><div class="progress-copy"><span id="progress-label">01</span> / 09</div></div>
       <div class="flipbook">
@@ -127,8 +167,10 @@
       <div class="result-card">
         <div class="eyebrow">YOUR CONSTELLATION TIN</div>
         <p class="result-kicker" id="result-kicker">Your guiding constellation is</p>
+        <img class="result-constellation-art" id="result-constellation-art" alt="" hidden />
         <h1 id="result-name"></h1>
         <h3 id="result-title"></h3>
+        <p class="result-attributes" id="result-attributes"></p>
         <div class="tin-scene" aria-label="A pink constellation card resting inside an open silver keepsake tin">
           <img class="tin-image" src="assets/tin.png" alt="Open silver keepsake tin" />
           <span class="tin-card-shadow" aria-hidden="true"></span>
@@ -186,6 +228,6 @@
   <script src="questions/question-07.js?v=audio-final"></script>
   <script src="questions/question-08.js?v=audio-final"></script>
   <script src="questions/question-09.js?v=no-melody-input"></script>
-  <script src="app.js?v=card-first"></script>
+  <script src="app.js?v=customize-result-art"></script>
 </body>
 </html>
