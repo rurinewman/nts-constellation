@@ -2929,3 +2929,8 @@ select {
     top: -17% !important;
   }
 }
+
+/* Fine-tune the uploaded portrait inside the printed photo frame. */
+.tin-card-photo {
+  transform: translateX(-4px);
+}
