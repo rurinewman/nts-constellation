@@ -348,6 +348,12 @@ const CUSTOM_TIN_ICON_OPTIONS = [
   { id: "yellow-star-plush", src: "assets/tin-icons/yellow-star-plush.png", label: "Yellow star plush" },
   { id: "green-drink", src: "assets/tin-icons/green-drink.png", label: "Green drink" },
   { id: "pink-drink", src: "assets/tin-icons/pink-drink.png", label: "Pink drink" },
+  { id: "blue-drink", src: "assets/tin-icons/blue-drink.png", label: "Blue drink" },
+  { id: "orange-drink", src: "assets/tin-icons/orange-drink.png", label: "Orange drink" },
+  { id: "strawberry-pocky", src: "assets/tin-icons/strawberry-pocky.png", label: "Strawberry Pocky" },
+  { id: "cap-plush-doll", src: "assets/tin-icons/cap-plush-doll.png", label: "Cap-wearing plush doll" },
+  { id: "blue-bus", src: "assets/tin-icons/blue-bus.png", label: "Blue bus" },
+  { id: "seated-white-bunny", src: "assets/tin-icons/seated-white-bunny.png", label: "Seated white bunny plush" },
 ];
 const TIN_WORD_LAYOUT = [
   { x: "calc(21.875% - 19px)", y: "36%", rot: "-90deg" },

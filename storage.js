@@ -27,15 +27,10 @@ function getSupabaseHeaders(extraHeaders = {}) {
   return headers;
 }
 
-function makeClaimCode(name, constellation) {
-  const namePart = (name || "STAR")
-    .replace(/[^a-z0-9]/gi, "")
-    .slice(0, 4)
-    .toUpperCase()
-    .padEnd(4, "X");
+function makeClaimCode(constellation) {
   const constellationPart = (constellation || "SKY").slice(0, 3).toUpperCase();
   const randomPart = Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `${namePart}-${constellationPart}-${randomPart}`;
+  return `NTS-${constellationPart}-${randomPart}`;
 }
 
 function getLocalBadges() {
@@ -164,7 +159,7 @@ function getBadgePhotoUrl(badge) {
 
 async function saveBadgeRecord(payload) {
   const badge = {
-    claim_code: makeClaimCode(payload.participant_name, payload.constellation_name),
+    claim_code: makeClaimCode(payload.constellation_name),
     participant_name: payload.participant_name,
     participant_dob: payload.participant_dob || null,
     constellation_name: payload.constellation_name,
