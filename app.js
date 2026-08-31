@@ -835,11 +835,10 @@ function handlePhotoUpload(event) {
   image.src = objectUrl;
 }
 
-function renderTinIcons(key = resultConstellationKey) {
+function renderTinIcons() {
   const holder = $("tin-icons");
   if (!holder) return;
-  const customIcons = normalizeTinIcons(selectedTinIcons);
-  const icons = customIcons.length ? customIcons : getDefaultTinIcons(key);
+  const icons = normalizeTinIcons(selectedTinIcons);
   holder.innerHTML = "";
   icons.slice(0, MAX_TIN_ICONS).forEach((iconId) => {
     const icon = CUSTOM_TIN_ICON_OPTIONS.find((option) => option.id === iconId);
@@ -917,10 +916,14 @@ function toggleTinIcon(icon) {
   selectedTinIcons = normalizeTinIcons(selectedTinIcons);
   if (selectedTinIcons.includes(icon)) {
     selectedTinIcons = selectedTinIcons.filter((selectedIcon) => selectedIcon !== icon);
-  } else if (selectedTinIcons.length < MAX_TIN_ICONS) {
+  } else {
+    if (selectedTinIcons.length >= MAX_TIN_ICONS) {
+      selectedTinIcons = selectedTinIcons.slice(1);
+    }
     selectedTinIcons = [...selectedTinIcons, icon];
   }
   renderIconOptions();
+  renderTinIcons();
   saveCurrentDraft("customize");
 }
 
