@@ -308,24 +308,44 @@ const CONSTELLATION_ART = {
   lupus: "assets/constellation-characters/lupus.png",
 };
 const CUSTOM_TIN_ICON_OPTIONS = [
-  "🔥",
-  "🌅",
-  "🌱",
-  "🦋",
-  "☀️",
-  "💫",
-  "🐚",
-  "🌊",
-  "📓",
-  "🧭",
-  "🎨",
-  "✨",
+  { id: "plush-cat", src: "assets/tin-icons/plush-cat.png", label: "Happy plush cat" },
+  { id: "star-cat", src: "assets/tin-icons/star-cat.png", label: "Black cat with a star" },
+  { id: "onigiri", src: "assets/tin-icons/onigiri.png", label: "Onigiri" },
+  { id: "takeaway-coffee", src: "assets/tin-icons/takeaway-coffee.png", label: "Takeaway coffee" },
+  { id: "iced-matcha", src: "assets/tin-icons/iced-matcha.png", label: "Iced matcha" },
+  { id: "paper-bag", src: "assets/tin-icons/paper-bag.png", label: "Paper bag" },
+  { id: "journal-and-pen", src: "assets/tin-icons/journal-and-pen.png", label: "Journal and pen" },
+  { id: "cinnamon-roll", src: "assets/tin-icons/cinnamon-roll.png", label: "Cinnamon roll" },
+  { id: "iced-coffee", src: "assets/tin-icons/iced-coffee.png", label: "Iced coffee" },
+  { id: "laptop", src: "assets/tin-icons/laptop.png", label: "Laptop" },
+  { id: "headphones", src: "assets/tin-icons/headphones.png", label: "Headphones" },
+  { id: "travel-cup", src: "assets/tin-icons/travel-cup.png", label: "Travel cup" },
+  { id: "blue-car", src: "assets/tin-icons/blue-car.png", label: "Blue car" },
+  { id: "popcorn", src: "assets/tin-icons/popcorn.png", label: "Popcorn" },
+  { id: "football", src: "assets/tin-icons/football.png", label: "Football" },
+  { id: "skateboard", src: "assets/tin-icons/skateboard.png", label: "Skateboard" },
+  { id: "electric-guitar", src: "assets/tin-icons/electric-guitar.png", label: "Electric guitar" },
+  { id: "union-jack-tote", src: "assets/tin-icons/union-jack-tote.png", label: "Union Jack tote bag" },
+  { id: "black-handbag", src: "assets/tin-icons/black-handbag.png", label: "Black handbag" },
+  { id: "water-bottle", src: "assets/tin-icons/water-bottle.png", label: "Water bottle" },
+  { id: "boxing-gloves", src: "assets/tin-icons/boxing-gloves.png", label: "Boxing gloves" },
+  { id: "spicy-noodles", src: "assets/tin-icons/spicy-noodles.png", label: "Spicy noodle cup" },
+  { id: "yellow-scooter", src: "assets/tin-icons/yellow-scooter.png", label: "Yellow scooter" },
+  { id: "fries", src: "assets/tin-icons/fries.png", label: "Fries" },
+  { id: "frozen-yogurt", src: "assets/tin-icons/frozen-yogurt.png", label: "Frozen-yogurt cup" },
+  { id: "pink-bottle", src: "assets/tin-icons/pink-bottle.png", label: "Pink bottle" },
+  { id: "blue-sports-bottle", src: "assets/tin-icons/blue-sports-bottle.png", label: "Blue sports bottle" },
+  { id: "composition-notebook", src: "assets/tin-icons/composition-notebook.png", label: "Composition notebook" },
+  { id: "virtual-pet", src: "assets/tin-icons/virtual-pet.png", label: "Virtual pet" },
+  { id: "tangled-earbuds", src: "assets/tin-icons/tangled-earbuds.png", label: "Tangled earbuds" },
+  { id: "compact-camera", src: "assets/tin-icons/compact-camera.png", label: "Compact camera" },
+  { id: "music-player", src: "assets/tin-icons/music-player.png", label: "Music player with earbuds" },
 ];
 const TIN_ICON_LAYOUT = [
-  { x: "12%", y: "27%", size: "18%", fontSize: "clamp(34px, 5.6vw, 84px)", rot: "-8deg" },
-  { x: "45%", y: "69%", size: "12%", fontSize: "clamp(24px, 3.5vw, 54px)", rot: "3deg" },
-  { x: "68%", y: "21%", size: "13%", fontSize: "clamp(28px, 4.3vw, 66px)", rot: "8deg" },
-  { x: "88%", y: "70%", size: "17%", fontSize: "clamp(34px, 5.2vw, 78px)", rot: "-7deg" },
+  { x: "12%", y: "27%", size: "20%", rot: "-8deg" },
+  { x: "45%", y: "69%", size: "16%", rot: "3deg" },
+  { x: "68%", y: "21%", size: "17%", rot: "8deg" },
+  { x: "88%", y: "70%", size: "20%", rot: "-7deg" },
 ];
 const TIN_WORD_LAYOUT = [
   { x: "calc(21.875% - 19px)", y: "36%", rot: "-90deg" },
@@ -335,18 +355,6 @@ const TIN_WORD_LAYOUT = [
   { x: "50%", y: "calc(94.92% + 20px)", rot: "0deg" },
 ];
 const MAX_TIN_ICONS = 4;
-const CONSTELLATION_ICON_SETS = {
-  ursa: ["⚓", "🧸", "🗻", "🕯️", "🧭", "🌲"],
-  pegasus: ["🪽", "☁️", "🎨", "🪁", "📸", "✨"],
-  delphinus: ["🐚", "💌", "🌊", "🤝", "🫧", "🌷"],
-  corvus: ["📓", "🔍", "🕰️", "🪶", "☕", "🌙"],
-  draco: ["🔥", "🛡️", "🔑", "⚡", "🗡️", "🏮"],
-  aquila: ["🏔️", "🦅", "🏅", "🚀", "📍", "☀️"],
-  vulpecula: ["🧭", "🗺️", "🔭", "🍄", "🌿", "🌌"],
-  lynx: ["🐈", "🪞", "💎", "🌕", "🪻", "🧿"],
-  cetus: ["🐋", "🌊", "🐚", "🫧", "🛶", "💙"],
-  phoenix: ["🔥", "🌅", "🌱", "🦋", "☀️", "💫"],
-};
 let cameraStream = null;
 let capturedPhoto = "";
 let signatureData = "";
@@ -829,19 +837,21 @@ function renderTinIcons(key = resultConstellationKey) {
   const holder = $("tin-icons");
   if (!holder) return;
   const customIcons = normalizeTinIcons(selectedTinIcons);
-  const icons = customIcons.length
-    ? customIcons
-    : CONSTELLATION_ICON_SETS[key] || CONSTELLATION_ICON_SETS.pegasus;
+  const icons = customIcons.length ? customIcons : getDefaultTinIcons(key);
   holder.innerHTML = "";
-  icons.slice(0, MAX_TIN_ICONS).forEach((icon, index) => {
+  icons.slice(0, MAX_TIN_ICONS).forEach((iconId, index) => {
+    const icon = CUSTOM_TIN_ICON_OPTIONS.find((option) => option.id === iconId);
+    if (!icon) return;
     const layout = TIN_ICON_LAYOUT[index];
     const item = document.createElement("span");
-    item.className = "tin-icon";
-    item.textContent = icon;
+    const image = document.createElement("img");
+    item.className = "tin-icon tin-icon-image";
+    image.src = icon.src;
+    image.alt = icon.label;
+    item.appendChild(image);
     item.style.setProperty("--tin-icon-x", layout.x);
     item.style.setProperty("--tin-icon-y", layout.y);
     item.style.setProperty("--tin-icon-size", layout.size);
-    item.style.setProperty("--tin-icon-font-size", layout.fontSize);
     item.style.setProperty("--tin-icon-rotation", layout.rot);
     holder.appendChild(item);
   });
@@ -874,15 +884,16 @@ function renderCardColorOptions() {
 }
 
 function normalizeTinIcons(icons) {
+  const allowedIcons = new Set(CUSTOM_TIN_ICON_OPTIONS.map((option) => option.id));
   return [...new Set(Array.isArray(icons) ? icons : [])]
-    .filter((icon) => CUSTOM_TIN_ICON_OPTIONS.includes(icon))
+    .filter((icon) => allowedIcons.has(icon))
     .slice(0, MAX_TIN_ICONS);
 }
 
-function getDefaultTinIcons(key) {
-  return normalizeTinIcons(
-    CONSTELLATION_ICON_SETS[key] || CONSTELLATION_ICON_SETS.pegasus,
-  );
+function getDefaultTinIcons() {
+  return CUSTOM_TIN_ICON_OPTIONS
+    .slice(0, MAX_TIN_ICONS)
+    .map((option) => option.id);
 }
 
 function renderIconOptions() {
@@ -891,12 +902,16 @@ function renderIconOptions() {
   holder.innerHTML = "";
   CUSTOM_TIN_ICON_OPTIONS.forEach((icon) => {
     const button = document.createElement("button");
+    const image = document.createElement("img");
     button.type = "button";
     button.className = "icon-option";
-    button.textContent = icon;
-    button.dataset.icon = icon;
-    button.setAttribute("aria-pressed", String(selectedTinIcons.includes(icon)));
-    button.addEventListener("click", () => toggleTinIcon(icon));
+    button.dataset.icon = icon.id;
+    button.setAttribute("aria-label", icon.label);
+    button.setAttribute("aria-pressed", String(selectedTinIcons.includes(icon.id)));
+    image.src = icon.src;
+    image.alt = "";
+    button.appendChild(image);
+    button.addEventListener("click", () => toggleTinIcon(icon.id));
     holder.appendChild(button);
   });
 }

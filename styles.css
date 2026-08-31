@@ -451,6 +451,17 @@
   filter: drop-shadow(0 12px 9px rgb(62 53 60 / 34%));
 }
 
+.tin-icon-image {
+  filter: none;
+}
+
+.tin-icon-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .tin-word-ring {
   position: absolute;
   inset: 0;
@@ -1076,19 +1087,28 @@
   justify-content: center;
   width: 58px;
   height: 58px;
-  border: 2px solid rgba(233, 248, 252, .58);
-  border-radius: 20px;
-  background: rgba(248, 252, 255, .16);
-  font-size: 28px;
+  padding: 4px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
   cursor: pointer;
   transition: transform .18s ease, background .18s ease, border-color .18s ease;
+}
+
+.icon-option img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .icon-option:hover,
 .icon-option[aria-pressed="true"] {
   transform: translateY(-3px) rotate(-2deg);
   border-color: #fff6b0;
-  background: rgba(255, 246, 176, .32);
+  background: transparent;
+  box-shadow: none;
 }
 
 .customize-actions {
