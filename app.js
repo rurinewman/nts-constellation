@@ -1263,7 +1263,12 @@ async function saveCurrentBadge(constellation, selectedWords, resultCopy) {
     }
   } catch (error) {
     $("claim-code-output").textContent = "Could not save";
-    $("save-status").textContent = "The badge is visible, but the archive database could not be reached.";
+    console.error("Could not save constellation badge:", error);
+    const schemaNeedsUpdate = error?.code === "42703"
+      || /participant_dob|card_color|column .* does not exist/i.test(error?.message || "");
+    $("save-status").textContent = schemaNeedsUpdate
+      ? "The archive table needs updating. Run supabase-migration.sql, then create the badge again."
+      : "The badge is visible, but the archive database could not be reached.";
   }
 }
 async function retrieveBadge(event) {

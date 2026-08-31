@@ -91,7 +91,19 @@ async function supabaseRequest(path, options = {}) {
   });
 
   if (!response.ok) {
-    throw new Error(`Archive database request failed: ${response.status}`);
+    const responseText = await response.text();
+    let errorBody = {};
+    try {
+      errorBody = JSON.parse(responseText);
+    } catch {
+      // Keep the HTTP error useful even when the API does not return JSON.
+    }
+    const error = new Error(
+      errorBody.message || `Archive database request failed: ${response.status}`,
+    );
+    error.code = errorBody.code || "";
+    error.status = response.status;
+    throw error;
   }
 
   if (response.status === 204) return null;

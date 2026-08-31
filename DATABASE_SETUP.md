@@ -12,6 +12,8 @@ The SQL is safe to rerun: it adds the `participant_dob`, `card_color`, and `phot
 
 If your project returns a permission error specifically for `storage.buckets`, create a public bucket named `constellation-photos` from **Storage → New bucket** in the Supabase dashboard, then run the rest of this SQL starting at the first `alter table` statement.
 
+If the table already exists but new badges show a schema error, run the smaller `supabase-migration.sql` file. It only adds the `participant_dob` and `card_color` columns and does not require Storage permissions.
+
 ## 2. Add your project keys
 
 For a static Vercel deployment, the simplest setup is to keep the public Supabase anon credentials in `config.js`.
