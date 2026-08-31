@@ -2882,6 +2882,10 @@ select {
   transform: translateY(-1px) rotate(-1.5deg);
 }
 
+.tin-card-stack :is(#license-name, #license-dob) {
+  transform: translateY(-2.5px) rotate(-1.5deg);
+}
+
 /* Align the live values with each portrait template's printed dotted rows. */
 .tin-card-stack[data-card-color="blue"] #license-name {
   top: 40.4%;
