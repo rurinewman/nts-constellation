@@ -2879,7 +2879,7 @@ select {
   text-overflow: clip;
   font-size: min(.56vw, 8px);
   line-height: 1;
-  transform: translateY(-6px) rotate(-1.5deg);
+  transform: translateY(-1px) rotate(-1.5deg);
 }
 
 /* Align the live values with each portrait template's printed dotted rows. */
