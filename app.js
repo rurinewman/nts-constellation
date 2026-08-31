@@ -340,12 +340,14 @@ const CUSTOM_TIN_ICON_OPTIONS = [
   { id: "tangled-earbuds", src: "assets/tin-icons/tangled-earbuds.png", label: "Tangled earbuds" },
   { id: "compact-camera", src: "assets/tin-icons/compact-camera.png", label: "Compact camera" },
   { id: "music-player", src: "assets/tin-icons/music-player.png", label: "Music player with earbuds" },
-];
-const TIN_ICON_LAYOUT = [
-  { x: "12%", y: "27%", size: "20%", rot: "-8deg" },
-  { x: "45%", y: "69%", size: "16%", rot: "3deg" },
-  { x: "68%", y: "21%", size: "17%", rot: "8deg" },
-  { x: "88%", y: "70%", size: "20%", rot: "-7deg" },
+  { id: "gum-pack", src: "assets/tin-icons/gum-pack.png", label: "Gum pack" },
+  { id: "green-star-plush", src: "assets/tin-icons/green-star-plush.png", label: "Green star plush" },
+  { id: "pink-volleyball", src: "assets/tin-icons/pink-volleyball.png", label: "Pink volleyball" },
+  { id: "white-bunny-plush", src: "assets/tin-icons/white-bunny-plush.png", label: "White bunny plush" },
+  { id: "bee-plush", src: "assets/tin-icons/bee-plush.png", label: "Bee plush" },
+  { id: "yellow-star-plush", src: "assets/tin-icons/yellow-star-plush.png", label: "Yellow star plush" },
+  { id: "green-drink", src: "assets/tin-icons/green-drink.png", label: "Green drink" },
+  { id: "pink-drink", src: "assets/tin-icons/pink-drink.png", label: "Pink drink" },
 ];
 const TIN_WORD_LAYOUT = [
   { x: "calc(21.875% - 19px)", y: "36%", rot: "-90deg" },
@@ -839,20 +841,15 @@ function renderTinIcons(key = resultConstellationKey) {
   const customIcons = normalizeTinIcons(selectedTinIcons);
   const icons = customIcons.length ? customIcons : getDefaultTinIcons(key);
   holder.innerHTML = "";
-  icons.slice(0, MAX_TIN_ICONS).forEach((iconId, index) => {
+  icons.slice(0, MAX_TIN_ICONS).forEach((iconId) => {
     const icon = CUSTOM_TIN_ICON_OPTIONS.find((option) => option.id === iconId);
     if (!icon) return;
-    const layout = TIN_ICON_LAYOUT[index];
     const item = document.createElement("span");
     const image = document.createElement("img");
     item.className = "tin-icon tin-icon-image";
     image.src = icon.src;
     image.alt = icon.label;
     item.appendChild(image);
-    item.style.setProperty("--tin-icon-x", layout.x);
-    item.style.setProperty("--tin-icon-y", layout.y);
-    item.style.setProperty("--tin-icon-size", layout.size);
-    item.style.setProperty("--tin-icon-rotation", layout.rot);
     holder.appendChild(item);
   });
 }

@@ -431,24 +431,28 @@
   width: 52%;
   height: 37%;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 2%;
+  padding: 3% 2% 4%;
   overflow: hidden;
 }
 
 .tin-icon {
-  position: absolute;
+  position: relative;
   display: grid;
   place-items: center;
-  left: var(--tin-icon-x);
-  top: var(--tin-icon-y);
-  width: var(--tin-icon-size);
-  aspect-ratio: 1;
+  flex: 1 1 0;
+  width: auto;
+  max-width: 24%;
+  height: 88%;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  font-size: var(--tin-icon-font-size, clamp(18px, 4vw, 64px));
   line-height: 1;
-  transform: translate(-50%, -50%) rotate(var(--tin-icon-rotation));
-  filter: drop-shadow(0 12px 9px rgb(62 53 60 / 34%));
+  transform: none;
+  filter: none;
 }
 
 .tin-icon-image {
@@ -1628,8 +1632,8 @@ canvas {
   }
 
   .tin-icons {
-    top: 52%;
-    height: 32%;
+    top: 53%;
+    height: 35%;
   }
 
   .tin-card-stack {
