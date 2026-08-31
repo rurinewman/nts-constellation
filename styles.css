@@ -1215,9 +1215,9 @@
   transform: rotate(-1.5deg);
 }
 
-#license-name { top: calc(43% - 1px); }
-#license-dob { top: 41.5%; }
-#license-domain { top: 44.3%; }
+#license-name { top: calc(38% - 1px); }
+#license-dob { top: 40%; }
+#license-domain { top: 43%; }
 #standalone-license-name { top: 25.6%; }
 #standalone-license-dob { top: 31.8%; }
 #standalone-license-domain { top: 38%; }
